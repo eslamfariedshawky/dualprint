@@ -6,13 +6,13 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
 
-[assembly: AssemblyTitle("MultiPrint")]
-[assembly: AssemblyDescription("MultiPrint - print to several printers at once")]
-[assembly: AssemblyCompany("MultiPrint")]
-[assembly: AssemblyProduct("MultiPrint")]
-[assembly: AssemblyCopyright("MultiPrint")]
-[assembly: AssemblyVersion("2.2.5.0")]
-[assembly: AssemblyFileVersion("2.2.5.0")]
+[assembly: AssemblyTitle("DualPrint")]
+[assembly: AssemblyDescription("DualPrint - print to several printers at once")]
+[assembly: AssemblyCompany("DualPrint")]
+[assembly: AssemblyProduct("DualPrint")]
+[assembly: AssemblyCopyright("DualPrint contributors")]
+[assembly: AssemblyVersion("3.0.0.0")]
+[assembly: AssemblyFileVersion("3.0.0.0")]
 
 static class Program
 {
@@ -57,7 +57,7 @@ static class Program
         object runspace = null;
         try
         {
-            try { SetCurrentProcessExplicitAppUserModelID("MultiPrint.App"); } catch { }
+            try { SetCurrentProcessExplicitAppUserModelID("DualPrint.App"); } catch { }
 
             if (!watch)
             {
@@ -72,8 +72,12 @@ static class Program
             }
 
             string script;
-            using (Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream("MultiPrint.ps1"))
-            using (var r = new StreamReader(s, System.Text.Encoding.UTF8)) { script = r.ReadToEnd(); }
+            using (Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream("DualPrint.ps1"))
+            {
+                // A build/resource name mismatch must fail loudly, not as a NullReferenceException
+                if (s == null) throw new InvalidOperationException("Embedded script DualPrint.ps1 is missing");
+                using (var r = new StreamReader(s, System.Text.Encoding.UTF8)) { script = r.ReadToEnd(); }
+            }
 
             Assembly sma = Assembly.Load("System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
             Type issT = sma.GetType("System.Management.Automation.Runspaces.InitialSessionState", true);
@@ -124,7 +128,7 @@ static class Program
                 object shown = M(proxyT, "GetVariable", typeof(string))
                                     .Invoke(proxy, new object[] { "MPErrorShown" });
                 if (!watch && !(shown is bool && (bool)shown))
-                    MessageBoxW(IntPtr.Zero, (tie.InnerException ?? tie).Message, "MultiPrint", 0x10);
+                    MessageBoxW(IntPtr.Zero, (tie.InnerException ?? tie).Message, "DualPrint", 0x10);
                 return 1;
             }
             return 0;
@@ -133,7 +137,7 @@ static class Program
         {
             if (!watch)
                 MessageBoxW(IntPtr.Zero, (ex is TargetInvocationException && ex.InnerException != null ? ex.InnerException : ex).Message,
-                            "MultiPrint", 0x10);
+                            "DualPrint", 0x10);
             return 1;
         }
         finally
