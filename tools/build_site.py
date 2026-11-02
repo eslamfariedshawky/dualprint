@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-يبني صفحات الموقع في فولدر website/ من tools/site_content.py
-التشغيل:  python tools/build_site.py
-الروابط الكاملة (__SITE_URL__ و __REPO_URL__) بتتكتب تلقائيًا وقت النشر في .github/workflows/pages.yml
+Builds the website pages in the website/ folder from tools/site_content.py
+Run:  python tools/build_site.py
+The full URLs (__SITE_URL__ and __REPO_URL__) are filled in automatically at publish time in .github/workflows/pages.yml
 """
 import json, os, html, sys, re, hashlib, base64
 sys.path.insert(0, os.path.dirname(__file__))
@@ -14,7 +14,7 @@ REPO = "__REPO_URL__"
 DL = REPO + "/releases/latest/download/MultiPrint.zip"
 e = html.escape
 
-def path_of(lang):           # المسار النسبي للصفحة من جذر الموقع
+def path_of(lang):           # Page path relative to the site root
     return "" if lang == "en" else lang + "/"
 
 def guide_path(lang):
@@ -40,20 +40,20 @@ def svg(d, size=22):
     return (f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
             f'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{d}"/></svg>')
 
-APP_LANGS = {"en", "ar", "es", "fr", "de"}   # لغات واجهة البرنامج (صور البرنامج)
-FEAT_KEEP = [8, 0, 1, 3, 6, 7]   # المزايا المعروضة (أقل كلام)
-FAQ_KEEP = [0, 1, 2, 5]           # الأسئلة المعروضة
+APP_LANGS = {"en", "ar", "es", "fr", "de"}   # App UI languages (app screenshots)
+FEAT_KEEP = [8, 0, 1, 3, 6, 7]   # Features shown (keep it short)
+FAQ_KEEP = [0, 1, 2, 5]           # FAQ entries shown
 
 def vis(text, rtl):
-    """escape للنص الظاهر؛ في العربي يعزل الجمل الإنجليزية بين «» عشان ما تتلخبطش"""
+    """Escapes visible text; in Arabic, isolates English phrases between «» so they do not get jumbled"""
     t = e(text)
     if rtl:
         t = re.sub(r'«([^»]*[A-Za-z][^»]*)»', r'«<bdi>\1</bdi>»', t)
-        t = re.sub(r'(\S+_\d{4}-\d{2}-\d{2}_[\d-]+\.pdf)', r'<bdi dir="ltr">\1</bdi>', t)   # أسماء الملفات
+        t = re.sub(r'(\S+_\d{4}-\d{2}-\d{2}_[\d-]+\.pdf)', r'<bdi dir="ltr">\1</bdi>', t)   # File names
     return t
 
 def h1_lines(text):
-    """العنوان الكبير: كل جملة في سطر (أسلوب Apple)"""
+    """Large headline: each sentence on its own line (Apple style)"""
     parts = [x for x in re.split(r'(?<=\.)\s+', text) if x]
     return '<br>'.join(e(x) for x in parts)
 
@@ -85,7 +85,7 @@ PAGE_JS = '''<script>
 
 def page(lang):
     c = dict(C[lang])
-    shot = lang if lang in APP_LANGS else "en"   # البرنامج نفسه مش فيه روسي، فالصفحة الروسي بتعرض الصورة الإنجليزي
+    shot = lang if lang in APP_LANGS else "en"   # The app itself has no Russian, so the Russian page shows the English screenshot
     c["faqs"] = [c["faqs"][i] for i in FAQ_KEEP]
     rel = "" if lang == "en" else "../"
     alternates = "\n".join(f'<link rel="alternate" hreflang="{l}" href="{url_of(l)}">' for l in LANGS)
@@ -333,7 +333,7 @@ def guide_page(lang):
 
 
 def add_csp(doc):
-    """Content-Security-Policy صارمة: السكربتات المسموحة هي اللي في الصفحة بس (بالـ hash)"""
+    """Strict Content-Security-Policy: only scripts inline in the page are allowed (by hash)"""
     hashes = []
     for body in re.findall(r'<script>(.*?)</script>', doc, re.S):
         h = base64.b64encode(hashlib.sha256(body.encode('utf-8')).digest()).decode()
@@ -512,7 +512,7 @@ def main():
         f.write(CSS)
     with open(os.path.join(ROOT, "assets", "favicon.svg"), "w", encoding="utf-8") as f:
         f.write(FAVICON)
-    # sitemap مع روابط اللغات
+    # sitemap with language links
     urls = []
     for lang in LANGS:
         alts = "".join(f'<xhtml:link rel="alternate" hreflang="{l}" href="{url_of(l)}"/>' for l in LANGS)

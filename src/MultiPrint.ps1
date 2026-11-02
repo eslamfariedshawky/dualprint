@@ -1,4 +1,4 @@
-# MultiPrint - طابعة افتراضية بتطبع على أكتر من طابعة في نفس الوقت
+# MultiPrint - a virtual printer that prints to several printers at the same time
 param([switch]$Watch)
 
 trap {
@@ -32,12 +32,12 @@ $PdfTarget    = 'Microsoft Print to PDF'
 $SumatraUrls  = @('https://www.sumatrapdfreader.org/dl/rel/3.6.1/SumatraPDF-3.6.1-64.zip',
                   'https://www.sumatrapdfreader.org/dl/rel/3.6/SumatraPDF-3.6-64.zip')
 
-# ================================================================ أدوات عامة
+# ================================================================ General helpers
 function Write-Log([string]$m) {
     try { Add-Content -Path $LogPath -Value ("{0:yyyy-MM-dd HH:mm:ss}  {1}" -f (Get-Date), $m) -Encoding UTF8 } catch {}
 }
 
-# أي خطأ في زرار أو حدث في الواجهة: يتسجل ويظهر رسالة، من غير ما البرنامج يقفل
+# Any error in a UI button or event is logged and shown as a message, without closing the app
 function Report-UiError($err) {
     try { Write-Log "UI error: $($err.Exception.Message) @ $($err.InvocationInfo.ScriptLineNumber)" } catch {}
     try { if (Get-Command Show-Toast -ErrorAction SilentlyContinue) { Show-Toast (T 'error' $err.Exception.Message) $false } } catch {}
@@ -62,7 +62,7 @@ function Get-Config {
     return @()
 }
 
-# يرجّع أسماء الطابعات كنصوص نضيفة (يتجاهل الفاضي ويفك شكل {value, Count} اللي PowerShell 5 ساعات بيحفظه)
+# Returns printer names as clean strings (skips empty ones and unwraps the {value, Count} shape that PowerShell 5 sometimes saves)
 function Get-Targets($cfg) {
     $t = $cfg.Targets
     if ($null -eq $t) { return @() }
@@ -71,12 +71,12 @@ function Get-Targets($cfg) {
 }
 
 function Save-Config($items) {
-    # لو ملف الطابعات ما اتقراش، ما نكتبش فوقه (عشان الطابعات القديمة ما تضيعش)
+    # If the printers file could not be read, do not overwrite it (so existing printers are not lost)
     if ($script:ConfigError) { throw (T 'err_config') }
     ConvertTo-Json -InputObject @($items) -Depth 5 | Set-Content -Path $ConfigPath -Encoding UTF8
 }
 
-# ================================================================ المراقب (يشتغل في الخلفية)
+# ================================================================ Watcher (runs in the background)
 function Test-FileReady([string]$p) {
     try {
         $s = [IO.File]::Open($p, 'Open', 'ReadWrite', 'None')
@@ -134,10 +134,10 @@ function Start-Watcher {
     $mutex = New-Object Threading.Mutex($false, 'Local\MultiPrintWatcher')
     $got = $false
     try { $got = $mutex.WaitOne(0) }
-    catch [Threading.AbandonedMutexException] { $got = $true }   # النسخة القديمة اتقفلت بالعافية - القفل بقى بتاعنا
+    catch [Threading.AbandonedMutexException] { $got = $true }   # Previous instance was killed - the lock is now ours
     catch { $got = $true }
     if (-not $got) { $global:WatcherAlreadyRunning = $true; return }
-    # نمسك كمان قفل النسخ القديمة (DualPrint) عشان لو اتفتحت نسخة قديمة خدمتها ما تشتغلش جنب دي
+    # Also take the legacy (DualPrint) lock so that if an old version is opened, its service does not run alongside this one
     $oldMutex = New-Object Threading.Mutex($false, 'Local\DualPrintWatcher')
     try { [void]$oldMutex.WaitOne(0) } catch {}
     Write-Log "Watcher started (pid $PID)"
@@ -203,19 +203,19 @@ if ($Watch) {
     return
 }
 
-# ================================================================ الإعداد
+# ================================================================ Setup
 New-Item -ItemType Directory -Force -Path $Root, (Join-Path $Root 'queues') | Out-Null
 
-# صلاحيات C:\DualPrint:
-#   المجلد نفسه: SYSTEM والمسؤولين تحكم كامل، المستخدم الحالي تعديل، باقي المستخدمين قراءة بس
-#   الملفات والمجلدات اللي جواه: بترث نفس الصلاحيات دي (reset) — من غير ما نحط صلاحيات مجلد على ملف
+# Permissions for C:\DualPrint:
+#   The folder itself: SYSTEM and Administrators full control, current user modify, other users read-only
+#   Files and subfolders inside it: inherit these same permissions (reset) — without applying folder permissions to a file
 $AclLog = Join-Path $env:TEMP 'MultiPrint-acl.txt'
 function Invoke-Logged([string]$exe, [string[]]$argList) {
     $out = & $exe @argList 2>&1
     try { Add-Content -Path $AclLog -Value ("> {0} {1}  (exit {2})`r`n{3}" -f $exe, ($argList -join ' '), $LASTEXITCODE, ($out -join "`r`n")) } catch {}
 }
 
-# كل مستوى لوحده: نرجّع ملكية الملفات للمسؤولين (takeown) وبعدين نخليها ترث صلاحيات المجلد (reset)
+# Each level separately: give file ownership back to Administrators (takeown), then make them inherit the folder permissions (reset)
 function Repair-Tree([string]$dir) {
     Invoke-Logged 'takeown.exe' @('/F', "$dir\*", '/A')
     Invoke-Logged 'icacls.exe' @("$dir\*", '/reset', '/C', '/Q')
@@ -233,12 +233,12 @@ function Protect-RootFolder {
     } catch { Write-Log "Folder permissions: $_" }
 }
 
-# يتأكد إن البرنامج يقدر يقرا ويكتب في ملف (مش قراءة بس)
+# Checks that the app can read and write a file (not just read it)
 function Test-Writable([string]$path) {
     try { $fs = [IO.File]::Open($path, 'Open', 'ReadWrite', 'ReadWrite'); $fs.Close(); return $true } catch { return $false }
 }
 
-# الملفات اللي مش قابلة للكتابة جوه C:\DualPrint (نتيجة إصدار 2.2.0)
+# Files inside C:\DualPrint that are not writable (caused by version 2.2.0)
 function Get-LockedFiles {
     $bad = @()
     try {
@@ -257,8 +257,8 @@ if ($locked.Count) {
         try { Add-Content -Path (Join-Path $env:TEMP 'MultiPrint-acl.txt') -Value ("{0:u} {1}`n{2}" -f (Get-Date), $b, ((& icacls.exe $b 2>&1) -join "`n")) } catch {}
     }
     Protect-RootFolder
-    $null = & attrib.exe -R -H -S "$Root\*" /S /D 2>&1   # ملف مخفي أو للقراءة فقط بيرفض الكتابة
-    # لو ملف لسه مقفول بعد التصليح: الملفات اللي ممكن تتعمل من جديد بتتمسح، والباقي بيتنقل ونستخدم نسخة جديدة منه
+    $null = & attrib.exe -R -H -S "$Root\*" /S /D 2>&1   # A hidden or read-only file rejects writes
+    # If a file is still locked after the repair: files that can be recreated are deleted; the rest are moved aside and a fresh copy is used
     foreach ($f in @(Get-LockedFiles)) {
         if ($f -eq $Root) { continue }
         try {
@@ -274,7 +274,7 @@ if ($locked.Count) {
 
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms
 
-# ================================================================ اللغات
+# ================================================================ Languages
 $AllStrings = @'
 __STRINGS_JSON__
 '@ | ConvertFrom-Json
@@ -286,7 +286,7 @@ function Get-Lang {
     return $null
 }
 function Set-Lang([string]$code) {
-    # لو الحفظ فشل لأي سبب البرنامج يكمل باللغة المختارة بدل ما يقفل
+    # If saving fails for any reason, the app continues in the chosen language instead of closing
     try { ConvertTo-Json -InputObject ([pscustomobject]@{ Lang = $code }) | Set-Content -Path $SettingsPath -Encoding UTF8 -ErrorAction Stop }
     catch { Write-Log "Could not save language: $_" }
 }
@@ -371,9 +371,9 @@ function T([string]$k) {
     return $s
 }
 
-# ================================================================ وظائف الطابعات
-# ================================================================ وظائف الطابعات
-# التوقيع لازم يكون سليم أو مش موجود؛ أي ملف متلاعب فيه (HashMismatch وغيره) بيترفض
+# ================================================================ Printer functions
+# ================================================================ Printer functions
+# The signature must be valid or absent; any tampered file (HashMismatch, etc.) is rejected
 function Test-SumatraFile([string]$path) {
     if (-not (Test-Path $path)) { return $false }
     try {
@@ -385,7 +385,7 @@ function Test-SumatraFile([string]$path) {
     return $true
 }
 
-# يمنع SumatraPDF من البحث عن تحديثات (ثغرة التحديث في الإصدارات القديمة)
+# Stops SumatraPDF from checking for updates (update vulnerability in older versions)
 function Set-SumatraSettings {
     $cfg = Join-Path $Root 'SumatraPDF-settings.txt'
     try {
@@ -403,7 +403,7 @@ function Set-SumatraSettings {
 
 function Find-Sumatra {
     if (Test-SumatraFile $Sumatra) { Set-SumatraSettings; return $true }
-    # بس أماكن محمية بصلاحيات المسؤول (مش جنب البرنامج ولا في مجلدات المستخدم)
+    # Only admin-protected locations (not next to the app and not in user folders)
     $candidates = @("$env:ProgramFiles\SumatraPDF\SumatraPDF.exe", "${env:ProgramFiles(x86)}\SumatraPDF\SumatraPDF.exe")
     foreach ($c in $candidates) {
         if ($c -and (Test-SumatraFile $c)) { Copy-Item $c $Sumatra -Force; Set-SumatraSettings; return $true }
@@ -438,7 +438,7 @@ function Test-InQueues([string]$path) {
     } catch { return $false }
 }
 
-# أسماء الطابعات: ممنوع الرموز اللي ممكن تكسر الأوامر أو المسارات
+# Printer names: characters that could break commands or paths are not allowed
 function Test-PrinterName([string]$n) {
     return ($n -and $n.Length -le 200 -and $n -notmatch '[\\,"<>|*?:/]' -and $n.Trim() -eq $n)
 }
@@ -462,7 +462,7 @@ function Register-Watcher {
     if ($AppExe -ne $RootExe) { Copy-Item $AppExe $RootExe -Force }
     $user = "$env:USERDOMAIN\$env:USERNAME"
     $action    = New-ScheduledTaskAction -Execute $RootExe -Argument '--watch'
-    # تشتغل مع فتح الويندوز + تتأكد كل دقيقة إنها شغالة (لو وقعت ترجع لوحدها)
+    # Runs at Windows startup + checks every minute that it is running (restarts on its own if it crashes)
     $trigger1  = New-ScheduledTaskTrigger -AtLogOn -User $user
     $trigger   = @($trigger1)
     try {
@@ -531,7 +531,7 @@ function Get-History([int]$count) {
     return $items
 }
 
-# استعلام واحد عن كل الطابعات: حالة الاتصال + الطابعة الافتراضية
+# A single query for all printers: connection status + default printer
 function Get-PrinterSnapshot {
     $h = @{}; $def = $null
     foreach ($p in @(Get-CimInstance Win32_Printer -Property Name, WorkOffline, PrinterStatus, DetectedErrorState, Default -ErrorAction SilentlyContinue)) {
@@ -544,7 +544,7 @@ function Get-PrinterSnapshot {
 
 function Get-PrinterStates { return (Get-PrinterSnapshot).States }
 
-# فحص فوري: الخدمة ماسكة قفل باسم ثابت، فلو القفل موجود يبقى شغالة (بدل البحث في كل العمليات)
+# Instant check: the service holds a lock with a fixed name, so if the lock exists the service is running (instead of searching all processes)
 function Test-ServiceRunning {
     $m = $null
     try {
@@ -562,7 +562,7 @@ function Get-DefaultPrinterName {
 }
 
 function Set-DefaultMultiPrinter([string]$name) {
-    # نوقف "Let Windows manage my default printer" عشان ويندوز ما يغيّرهاش لوحده
+    # Turn off "Let Windows manage my default printer" so Windows does not change it on its own
     try {
         $k = 'HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Windows'
         Set-ItemProperty -Path $k -Name 'LegacyDefaultPrinterMode' -Value 1 -Type DWord -ErrorAction Stop
@@ -571,7 +571,7 @@ function Set-DefaultMultiPrinter([string]$name) {
     if (-not $p) { throw (T 'err_notfound') }
     $r = Invoke-CimMethod -InputObject $p -MethodName SetDefaultPrinter
     if ($r.ReturnValue -ne 0) {
-        # طريقة احتياطية
+        # Fallback method
         $net = New-Object -ComObject WScript.Network
         $net.SetDefaultPrinter($name)
     }
@@ -579,7 +579,7 @@ function Set-DefaultMultiPrinter([string]$name) {
 }
 
 
-# ================================================================ الواجهة (WPF)
+# ================================================================ UI (WPF)
 $IF = 'Segoe Fluent Icons, Segoe MDL2 Assets'
 $PaperSizes = @('auto', 'A4', 'A3', 'A5', 'letter', 'legal')
 $CultureMap = @{ ar = 'ar-EG'; en = 'en-US'; es = 'es-ES'; fr = 'fr-FR'; de = 'de-DE' }
@@ -589,10 +589,10 @@ $Purple = '#5B45E6'
 
 function X([string]$s) {
     $r = [Security.SecurityElement]::Escape([string]$s)
-    if ($r.StartsWith('{')) { $r = '{}' + $r }   # يمنع تفسير النص كـ Markup Extension
+    if ($r.StartsWith('{')) { $r = '{}' + $r }   # Prevents the text from being parsed as a Markup Extension
     return $r
 }
-# بحث عن عنصر بالاسم جوه أي جزء اتعمل من XAML (أضمن من FindName)
+# Finds an element by name inside any part built from XAML (more reliable than FindName)
 function FN($root, [string]$name) {
     $n = [Windows.LogicalTreeHelper]::FindLogicalNode($root, $name)
     if (-not $n) { $n = $root.FindName($name) }
@@ -781,7 +781,7 @@ $xamlText = @'
       <ColumnDefinition Width="*"/>
     </Grid.ColumnDefinitions>
 
-    <!-- ===== الشريط الجانبي ===== -->
+    <!-- ===== Sidebar ===== -->
     <Border Grid.Column="0" Background="White" BorderBrush="#ECEDF3" BorderThickness="0,0,1,0">
       <DockPanel Margin="14,26,14,18">
         <Border x:Name="SvcBox" DockPanel.Dock="Bottom" CornerRadius="10" Padding="12,10" Cursor="Hand">
@@ -806,7 +806,7 @@ $xamlText = @'
       </DockPanel>
     </Border>
 
-    <!-- ===== صفحة الطابعات ===== -->
+    <!-- ===== Printers page ===== -->
     <ScrollViewer x:Name="PagePrinters" Grid.Column="1" VerticalScrollBarVisibility="Hidden">
       <StackPanel Margin="28,24,28,20">
         <Grid Margin="0,0,0,20">
@@ -857,7 +857,7 @@ $xamlText = @'
       </StackPanel>
     </ScrollViewer>
 
-    <!-- ===== صفحة السجل ===== -->
+    <!-- ===== Log page ===== -->
     <ScrollViewer x:Name="PageHistory" Grid.Column="1" VerticalScrollBarVisibility="Hidden" Visibility="Collapsed">
       <StackPanel Margin="28,24,28,20">
         <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
@@ -879,7 +879,7 @@ $xamlText = @'
       </StackPanel>
     </ScrollViewer>
 
-    <!-- ===== صفحة الإعدادات ===== -->
+    <!-- ===== Settings page ===== -->
     <ScrollViewer x:Name="PageSettings" Grid.Column="1" VerticalScrollBarVisibility="Hidden" Visibility="Collapsed">
       <StackPanel Margin="28,24,28,20">
         <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
@@ -931,7 +931,7 @@ $xamlText = @'
       </StackPanel>
     </ScrollViewer>
 
-    <!-- ===== نافذة الإضافة / التعديل ===== -->
+    <!-- ===== Add / edit dialog ===== -->
     <Grid x:Name="Overlay" Grid.ColumnSpan="2" Visibility="Collapsed" Background="#73111827">
       <Border Background="White" CornerRadius="18" Width="580" MaxHeight="660" Padding="26,24"
               HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -981,7 +981,7 @@ $xamlText = @'
       </Border>
     </Grid>
 
-    <!-- ===== رسالة سريعة ===== -->
+    <!-- ===== Toast message ===== -->
     <Border x:Name="Toast" Grid.ColumnSpan="2" Visibility="Collapsed" VerticalAlignment="Bottom" HorizontalAlignment="Center"
             Margin="0,0,0,26" CornerRadius="12" Padding="18,11" Background="#1E293B">
       <TextBlock x:Name="ToastText" Foreground="White" FontWeight="SemiBold" TextWrapping="Wrap" MaxWidth="600"/>
@@ -1008,7 +1008,7 @@ $win.MaxHeight = [Windows.SystemParameters]::WorkArea.Height
 $Chev.Text = if ($Lang -eq 'ar') { [string][char]0xE76B } else { [string][char]0xE76C }
 $LangNow.Text = $LangNames[$Lang]
 
-# ---------------------------------------------------------------- رسائل
+# ---------------------------------------------------------------- Messages
 $ToastTimer = New-Object Windows.Threading.DispatcherTimer
 $ToastTimer.Interval = [TimeSpan]::FromSeconds(3.5)
 $ToastTimer.Add_Tick({ try { $Toast.Visibility = 'Collapsed'; $ToastTimer.Stop()  } catch { Report-UiError $_ } })
@@ -1019,7 +1019,7 @@ function Show-Toast([string]$msg, [bool]$ok = $true) {
     $ToastTimer.Stop(); $ToastTimer.Start()
 }
 
-# ---------------------------------------------------------------- عناصر صغيرة
+# ---------------------------------------------------------------- Small elements
 function Get-FileBadge([string]$doc) {
     $ext = ''
     try { $ext = [IO.Path]::GetExtension($doc).ToLower() } catch {}
@@ -1110,7 +1110,7 @@ function New-EmptyText([string]$t) {
     return New-El "<TextBlock Text='$(X $t)' Foreground='#94A3B8' Margin='14,16' HorizontalAlignment='Center'/>"
 }
 
-# ---------------------------------------------------------------- كروت الطابعات
+# ---------------------------------------------------------------- Printer cards
 function New-TargetCard([string]$target, $cfg, $states) {
     if ($target -eq $PdfTarget) {
         $on = $cfg.PdfEnabled -ne $false
@@ -1215,7 +1215,7 @@ function Format-PrinterDetails([string]$target, $cfg, [bool]$paperOnly = $false)
     return ($details -join '  •  ')
 }
 
-# تفاصيل الطابعات (المقاس/الألوان) بطيئة، فبتتحمّل واحدة واحدة بعد ما الشباك يظهر
+# Printer details (paper size/colors) are slow, so they load one by one after the window appears
 function Start-DetailsLoad {
     if ($script:PendingDetails.Count -eq 0) { return }
     $item = $script:PendingDetails[0]; $script:PendingDetails.RemoveAt(0)
@@ -1403,7 +1403,7 @@ function Fill-Paper($cmb, [string]$val) {
     if (-not $cmb.SelectedItem) { $cmb.SelectedIndex = 0 }
 }
 
-# ---------------------------------------------------------------- تحديث الصفحات
+# ---------------------------------------------------------------- Page refresh
 function Refresh-Printers {
     $snap = Get-PrinterSnapshot
     $script:DefaultPrinter = $snap.Default
@@ -1497,7 +1497,7 @@ function Start-ServiceNow {
     } catch { Show-Toast (T 'error' $_.Exception.Message) $false }
 }
 
-# ---------------------------------------------------------------- نافذة الإضافة / التعديل
+# ---------------------------------------------------------------- Add / edit dialog
 $script:EditName = $null
 
 function Update-PdfPanel {
@@ -1623,9 +1623,9 @@ $BtnDelete.Add_Click({ try {
     } catch { Show-Toast (T 'error' $_.Exception.Message) $false }
  } catch { Report-UiError $_ } })
 
-# ---------------------------------------------------------------- التنقل والأزرار
+# ---------------------------------------------------------------- Navigation and buttons
 function Show-Page([string]$p) {
-    # الأزرار والصفحات بتتظبط الأول، وبعدين التحديث، عشان أي خطأ في التحديث ما يعلّقش التنقل
+    # Buttons and pages are set up first, then the refresh, so any refresh error does not block navigation
     $NavPrinters.IsChecked = ($p -eq 'printers')
     $NavHistory.IsChecked  = ($p -eq 'history')
     $NavSettings.IsChecked = ($p -eq 'settings')
@@ -1676,7 +1676,7 @@ $BtnLang.Add_Click({ try {
 
 $win.Add_KeyDown({ try { if ($_.Key -eq 'Escape' -and $Overlay.Visibility -eq 'Visible') { $Overlay.Visibility = 'Collapsed' }  } catch { Report-UiError $_ } })
 
-# تحديث تلقائي للسجل وحالة الخدمة
+# Auto-refresh of the log and service status
 $RefreshTimer = New-Object Windows.Threading.DispatcherTimer
 $RefreshTimer.Interval = [TimeSpan]::FromSeconds(3)
 $RefreshTimer.Add_Tick({ try {
@@ -1691,8 +1691,8 @@ $RefreshTimer.Add_Tick({ try {
     } catch {}
  } catch { Report-UiError $_ } })
 
-# ---------------------------------------------------------------- التشغيل
-# الشباك بيظهر فورًا، والبيانات بتتحمّل بعده
+# ---------------------------------------------------------------- Startup
+# The window appears immediately; data loads after it
 
 function Test-RootOpen {
     try {
