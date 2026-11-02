@@ -1,25 +1,21 @@
-<div dir="rtl">
+# Troubleshooting
 
-# حل المشكلات
+Always start here: in **Settings**, open the **Detailed log** and review the last lines.
 
-الخطوة الأولى دائمًا: من **الإعدادات** افتح **السجل التفصيلي** وراجع آخر الأسطر.
-
-| المشكلة | السبب المرجّح | الحل |
+| Problem | Likely cause | Solution |
 |---|---|---|
-| رسالة «Windows protected your PC» | الملف غير موقّع رقميًا | اختر **More info** ثم **Run anyway** |
-| يُغلق البرنامج فور تشغيله أو تظهر رسالة خطأ | مكتبة PowerShell أو الصلاحيات | شغّله عبر **Run as administrator**، وأرسل محتوى الملف `C:\DualPrint\error.txt` |
-| لم يُطبع أي شيء | خدمة الطباعة متوقفة | يجب أن يظهر المؤشر أسفل القائمة الجانبية باللون الأخضر مع عبارة **الخدمة تعمل**. إذا كان أحمر فاضغط عليه، أو اختر **الإعدادات ← إعادة التشغيل** |
-| حُفظ ملف PDF ولم تُطبع النسخة الورقية | أداة SumatraPDF غير متوفرة أو الطابعة غير متصلة | يُنزّل البرنامج الأداة تلقائيًا عند توفر الإنترنت. وإن تعذّر ذلك فثبّت SumatraPDF الإصدار 3.6 أو أحدث من [الموقع الرسمي](https://www.sumatrapdfreader.org) في المسار الافتراضي داخل Program Files، ثم أعد فتح البرنامج |
-| تظهر الحالة **جزئية** في السجل | تعذّر الوصول إلى إحدى الوجهات | مرّر المؤشر فوق الحالة لمعرفة الوجهة وسبب الفشل |
-| تظهر بطاقة حمراء بدلًا من بطاقة الطابعة | خلل في إعدادات الطابعة | اختر **تعديل** ثم احفظ مجددًا، وإذا استمرت المشكلة فأرسل النص الظاهر في البطاقة |
-| «تعريف Microsoft Print To PDF غير موجود» | الميزة غير مفعّلة في Windows | فعّلها من **Turn Windows features on or off ← Microsoft Print to PDF** |
-| يظهر اسم المستند «مستند» | التطبيق المصدر لا يرسل اسم المستند | سلوك طبيعي، ولا يؤثر في الطباعة |
-| لم يُطبَّق عدد النسخ المحدد في نافذة الطباعة | قيد معروف | تطبع كل طابعة وفق إعدادها الافتراضي |
-| تكرار الطباعة | تشغيل إصدار قديم جدًا (DualPrint) | شغّل أحدث إصدار مرة واحدة، وسيوقف الخدمة القديمة |
+| The message "Windows protected your PC" | The file is not digitally signed | Choose **More info**, then **Run anyway** |
+| The app closes right after starting, or an error message appears | PowerShell library or permissions | Run it with **Run as administrator**, and send the contents of `C:\DualPrint\error.txt` |
+| Nothing was printed | The print service is stopped | The indicator at the bottom of the side menu should be green and read **Service running**. If it is red, click it, or choose **Settings → Restart** |
+| The PDF was saved but the paper copy was not printed | SumatraPDF is not available or the printer is offline | The app downloads the tool automatically when internet is available. If that fails, install SumatraPDF version 3.6 or later from the [official website](https://www.sumatrapdfreader.org) in the default location under Program Files, then reopen the app |
+| The status shows **Partial** in the history | One of the destinations could not be reached | Hover over the status to see the destination and the reason for the failure |
+| A red card appears instead of the printer card | A problem in the printer's settings | Choose **Edit** and save again; if the problem persists, send the text shown on the card |
+| "Driver 'Microsoft Print To PDF' not found" | The feature is not enabled in Windows | Enable it from **Turn Windows features on or off → Microsoft Print to PDF** |
+| The document name shows as "Document" | The source application does not send the document name | Normal behavior; it does not affect printing |
+| The number of copies set in the print dialog was not applied | Known limitation | Each printer prints with its own default settings |
+| Duplicate printing | A very old version (DualPrint) is running | Run the latest version once, and it will stop the old service |
 
-## إعادة الضبط الكاملة
-1. من **الإعدادات** اختر **إزالة الكل**.
-2. احذف المجلد `C:\DualPrint`.
-3. شغّل أحدث إصدار وأنشئ الطابعات من جديد.
-
-</div>
+## Full reset
+1. In **Settings**, choose **Remove all**.
+2. Delete the `C:\DualPrint` folder.
+3. Run the latest version and create the printers again.

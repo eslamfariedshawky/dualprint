@@ -1,75 +1,71 @@
-<div dir="rtl">
+# Publishing on GitHub and Appearing in Search Engines
 
-# النشر على GitHub والظهور في محركات البحث
+All steps are free and require no file changes; the website link and the download link are added automatically on publishing.
 
-جميع الخطوات مجانية ولا تتطلب تعديل أي ملف؛ إذ يُضاف رابط الموقع ورابط التنزيل تلقائيًا عند النشر.
-
-## الخطوة 1: إنشاء المستودع
-1. سجّل الدخول إلى [github.com](https://github.com)، أو أنشئ حسابًا مجانيًا.
-2. افتح [github.com/new](https://github.com/new) وأدخل البيانات التالية:
+## Step 1: Create the repository
+1. Sign in to [github.com](https://github.com), or create a free account.
+2. Open [github.com/new](https://github.com/new) and enter the following:
    - **Repository name**: `multiprint`
-   - **Description** (مهمة لمحركات البحث):
+   - **Description** (important for search engines; the Arabic part is intentional, for Arabic search results):
      `Print to multiple printers at once & auto-save PDF — free Windows virtual printer | الطباعة على عدة طابعات في آنٍ واحد`
    - **Public**
-   - لا تحدد خيار *Add a README*.
-3. اضغط **Create repository**.
+   - Do not select *Add a README*.
+3. Click **Create repository**.
 
-## الخطوة 2: رفع الملفات من المتصفح
-1. في صفحة المستودع الفارغة اختر **uploading an existing file**.
-2. افتح المجلد `multiprint` على جهازك، وحدّد جميع محتوياته (Ctrl+A) واسحبها إلى الصفحة.
-3. اضغط **Commit changes**.
+## Step 2: Upload the files from the browser
+1. On the empty repository page, choose **uploading an existing file**.
+2. Open the `multiprint` folder on your computer, select all its contents (Ctrl+A) and drag them onto the page.
+3. Click **Commit changes**.
 
-> إذا لم يُرفع المجلد `.github` (قد يخفيه Windows)، فاختر **Add file ← Create new file**، واكتب في حقل الاسم `.github/workflows/release.yml` والصق محتوى الملف، ثم كرّر ذلك مع `pages.yml`.
-> بديلًا عن ذلك يمكنك استخدام [GitHub Desktop](https://desktop.github.com): **File ← Add local repository ← Publish**.
+> If the `.github` folder was not uploaded (Windows may hide it), choose **Add file → Create new file**, type `.github/workflows/release.yml` in the name field and paste the file's contents, then repeat for `pages.yml`.
+> Alternatively, you can use [GitHub Desktop](https://desktop.github.com): **File → Add local repository → Publish**.
 
-## الخطوة 3: تفعيل الموقع (مرة واحدة)
-1. افتح **Settings ← Pages**.
-2. اختر **GitHub Actions** في خانة **Source**.
-3. افتح **Actions ← Website ← Run workflow**.
-4. بعد دقيقة تقريبًا يصبح الموقع متاحًا على: `https://اسم-الحساب.github.io/multiprint/`
-5. في صفحة المستودع اضغط ⚙️ بجوار **About**، وفعّل **Use your GitHub Pages website**، وأضف في **Topics**:
+## Step 3: Enable the website (once)
+1. Open **Settings → Pages**.
+2. Choose **GitHub Actions** under **Source**.
+3. Open **Actions → Website → Run workflow**.
+4. After about a minute, the website is available at: `https://<account-name>.github.io/multiprint/`
+5. On the repository page, click ⚙️ next to **About**, enable **Use your GitHub Pages website**, and add these under **Topics**:
    `windows` `printer` `virtual-printer` `print` `pdf` `multiple-printers` `print-to-pdf` `printing` `business` `free-software`
 
-## الخطوة 4: الإصدار الأول (لتفعيل زر التنزيل)
-1. افتح **Releases ← Create a new release**.
-2. في **Choose a tag** اكتب `v2.2.5` ثم **Create new tag**.
-3. في **Title** اكتب `MultiPrint 2.2.5` ثم اضغط **Publish release**.
-4. خلال دقيقتين يبني GitHub البرنامج ويضيف `MultiPrint.zip` إلى الإصدار تلقائيًا (يمكنك المتابعة من **Actions**).
+## Step 4: First release (to enable the download button)
+1. Open **Releases → Create a new release**.
+2. In **Choose a tag**, type `v2.2.5`, then **Create new tag**.
+3. In **Title**, type `MultiPrint 2.2.5`, then click **Publish release**.
+4. Within two minutes, GitHub builds the app and adds `MultiPrint.zip` to the release automatically (you can follow progress under **Actions**).
 
-## الخطوة 5: محرك البحث Google
-يكتشف Google الموقع تلقائيًا مع الوقت، وتُسرّع الخطوات التالية فهرسته:
-1. افتح [Google Search Console](https://search.google.com/search-console) واختر **Add property ← URL prefix** والصق رابط الموقع.
-2. اختر طريقة التحقق **HTML file** ونزّل الملف (اسمه مثل `google1234abcd.html`).
-3. في المستودع افتح المجلد `website` واختر **Add file ← Upload files** وارفع الملف ثم **Commit**. انتظر دقيقة وعُد إلى Google واضغط **Verify**.
-4. من القائمة اختر **Sitemaps** واكتب `sitemap.xml` ثم **Submit**.
-5. من **URL inspection** الصق رابط كل صفحة (`/` و`/ar/` و`/guide/` و`/ar/guide/`…) واختر **Request indexing**.
-6. سجّل الموقع أيضًا في [Bing Webmaster Tools](https://www.bing.com/webmasters) (يمكن استيراده من Google Search Console بضغطة)، وفي [Yandex Webmaster](https://webmaster.yandex.com) للبحث بالروسية.
+## Step 5: Google search
+Google discovers the website automatically over time; the following steps speed up indexing:
+1. Open [Google Search Console](https://search.google.com/search-console), choose **Add property → URL prefix** and paste the website link.
+2. Choose the **HTML file** verification method and download the file (its name looks like `google1234abcd.html`).
+3. In the repository, open the `website` folder, choose **Add file → Upload files**, upload the file, then **Commit**. Wait a minute, go back to Google and click **Verify**.
+4. From the menu, choose **Sitemaps**, type `sitemap.xml`, then **Submit**.
+5. In **URL inspection**, paste the link of each page (`/`, `/ar/`, `/guide/`, `/ar/guide/`…) and choose **Request indexing**.
+6. Also register the website in [Bing Webmaster Tools](https://www.bing.com/webmasters) (it can be imported from Google Search Console in one click), and in [Yandex Webmaster](https://webmaster.yandex.com) for Russian search.
 
-يستغرق الظهور في نتائج البحث عادةً من عدة أيام إلى بضعة أسابيع، ويُسرّعه نشر رابط الموقع في المنصات والمجتمعات المهنية ذات الصلة.
+Appearing in search results usually takes from several days to a few weeks. Sharing the website link on relevant professional platforms and communities speeds it up.
 
-## تحسينات محركات البحث المضمّنة في الموقع
-- صفحة مستقلة لكل لغة: `/` (الإنجليزية) و`/ar/` و`/ru/` و`/de/` و`/es/` و`/fr/`، لكلٍّ منها عنوان ووصف وكلمات بحث بلغتها.
-- صفحة دليل لكل لغة (`/guide/` و`/ar/guide/`…) تجيب عن سؤال «كيف أطبع على طابعتين في الوقت نفسه في Windows؟» وتوضح لماذا لا تؤدي ميزة Printer Pooling هذه المهمة، وترتبط بها الصفحة الرئيسية.
-- سطر أعلى العنوان الرئيسي يتضمن عبارة البحث الأساسية بكل لغة.
-- روابط `hreflang` بين اللغات، ورابط `canonical` لكل صفحة.
-- بيانات منظّمة (Schema.org) من نوعي **SoftwareApplication** و**FAQPage**، ما قد يتيح ظهور الأسئلة الشائعة مباشرة في نتائج البحث.
-- ملفا `sitemap.xml` و`robots.txt`.
-- وسوم Open Graph لعرض الرابط بصورة وعنوان عند مشاركته.
-- تصميم خفيف وسريع ومتوافق مع الأجهزة المحمولة، ويدعم الوضع الداكن وتفضيلات إمكانية الوصول.
+## Search engine optimizations built into the website
+- A separate page for each language: `/` (English), `/ar/`, `/ru/`, `/de/`, `/es/` and `/fr/`, each with its own title, description and search keywords in that language.
+- A guide page for each language (`/guide/`, `/ar/guide/`…) that answers the question "How do I print to two printers at the same time in Windows?", explains why the Printer Pooling feature does not do this job, and is linked from the home page.
+- A line above the main heading containing the main search phrase in each language.
+- `hreflang` links between languages, and a `canonical` link for each page.
+- Structured data (Schema.org) of the **SoftwareApplication** and **FAQPage** types, which may allow the FAQ to appear directly in search results.
+- `sitemap.xml` and `robots.txt` files.
+- Open Graph tags so the link shows an image and title when shared.
+- A light, fast, mobile-friendly design that supports dark mode and accessibility preferences.
 
-## تعديل محتوى الموقع
-توجد جميع النصوص في `tools/site_content.py`. بعد التعديل نفّذ:
+## Editing the website content
+All texts are in `tools/site_content.py`. After editing, run:
 ```bash
 python tools/build_site.py
 ```
-ثم ارفع المجلد `website` المحدَّث، وسيُعاد نشر الموقع تلقائيًا.
+Then upload the updated `website` folder, and the website will be republished automatically.
 
-## إصدار تحديثات البرنامج
-1. ارفع الشيفرة المحدَّثة.
-2. حدّث `CHANGELOG.md` وقيمة `VERSION` في `tools/site_content.py`، ثم نفّذ `build_site.py`.
-3. أنشئ Release جديدًا برقم أعلى (`v2.1.2`…)، وسيشير زر التنزيل في الموقع إلى أحدث إصدار تلقائيًا.
+## Releasing app updates
+1. Upload the updated code.
+2. Update `CHANGELOG.md` and the `VERSION` value in `tools/site_content.py`, then run `build_site.py`.
+3. Create a new Release with a higher number (`v2.1.2`…); the download button on the website will point to the latest release automatically.
 
-## التوقيع الرقمي (اختياري، بمقابل مادي)
-لا تختفي رسالة **Windows protected your PC** إلا بتوقيع الملف التنفيذي بشهادة Code Signing من جهة معتمدة (مثل Sectigo وDigiCert وSSL.com) أو عبر خدمة Microsoft Artifact Signing. وعند توفر الشهادة تُضاف خطوة التوقيع إلى `release.yml`.
-
-</div>
+## Code signing (optional, paid)
+The **Windows protected your PC** message only goes away when the executable is signed with a Code Signing certificate from a trusted authority (such as Sectigo, DigiCert and SSL.com) or through the Microsoft Artifact Signing service. Once a certificate is available, a signing step is added to `release.yml`.

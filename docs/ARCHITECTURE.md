@@ -1,81 +1,79 @@
-<div dir="rtl">
+# Technical Architecture
 
-# البنية التقنية
-
-## الفكرة
-لا يتيح Windows لطابعة واحدة الإرسال إلى طابعتين. لذلك ينشئ MultiPrint طابعة افتراضية **تطبع إلى ملف PDF**، وتتولى خدمة صغيرة مراقبة هذا الملف وتوزيعه.
+## The idea
+Windows does not let a single printer send to two printers. So MultiPrint creates a virtual printer that **prints to a PDF file**, and a small service watches that file and distributes it.
 
 ```
- أي تطبيق ──طباعة──▶ «طباعة الفواتير» (طابعة افتراضية)
+ Any app ──print──▶ "Invoice Printing" (virtual printer)
                           │  Driver: Microsoft Print To PDF
                           │  Port:   C:\DualPrint\queues\q_xxx\incoming.pdf
                           ▼
-                 خدمة MultiPrint (MultiPrint.exe --watch)
-                          │  تكتشف incoming.pdf وتنتظر اكتمال كتابته
-                          │  تنقله إلى jobs\job_….pdf
-                          ├──▶ الطابعة 1  (SumatraPDF -print-to)
-                          ├──▶ الطابعة 2  (SumatraPDF -print-to)
-                          └──▶ مجلد PDF  (نسخ الملف بالاسم: البادئة_التاريخ_الوقت.pdf)
+                 MultiPrint service (MultiPrint.exe --watch)
+                          │  detects incoming.pdf and waits until it is fully written
+                          │  moves it to jobs\job_….pdf
+                          ├──▶ Printer 1  (SumatraPDF -print-to)
+                          ├──▶ Printer 2  (SumatraPDF -print-to)
+                          └──▶ PDF folder (copies the file as: Prefix_Date_Time.pdf)
                           │
-                          └──▶ history.jsonl  (اسم المستند ونتيجة كل وجهة)
+                          └──▶ history.jsonl  (document name and result for each destination)
 ```
 
-## المكوّنات
+## Components
 
-### `src/Launcher.cs`: الملف التنفيذي
-- برنامج C# صغير يعتمد على .NET Framework 4 المتوفر في Windows 10 و11.
-- يتضمن الملف `MultiPrint.ps1` بوصفه مَوردًا مدمجًا (resource).
-- يطلب صلاحيات المسؤول، باستثناء وضع `--watch`.
-- يشغّل البرنامج **داخل العملية نفسها** عبر PowerShell Runspace على خيط STA، فيظهر في شريط المهام ومدير المهام باسمه وأيقونته دون نافذة PowerShell.
-- يصل إلى `System.Management.Automation` عبر Reflection، فلا يحتاج إلى مراجع وقت البناء.
+### `src/Launcher.cs`: the executable
+- A small C# program that relies on .NET Framework 4, which is available in Windows 10 and 11.
+- Embeds `MultiPrint.ps1` as a resource.
+- Requests administrator rights, except in `--watch` mode.
+- Runs the app **in the same process** through a PowerShell Runspace on an STA thread, so it appears in the taskbar and Task Manager with its own name and icon, without a PowerShell window.
+- Accesses `System.Management.Automation` through Reflection, so it needs no build-time references.
 
-### `src/MultiPrint.ps1`: البرنامج
-| الجزء | المسؤولية |
+### `src/MultiPrint.ps1`: the app
+| Part | Responsibility |
 |---|---|
-| الأدوات العامة | `Get-Config` و`Save-Config` و`Get-Targets` و`Write-Log` |
-| المراقب (`-Watch`) | الدالة `Start-Watcher`: حلقة كل 0.7 ثانية، وقفل (Mutex) يمنع تشغيل نسختين، والتقاط اسم المستند عبر `Get-PrintJob`، والإرسال إلى كل وجهة، والتسجيل في السجل، وتنظيف الملفات الأقدم من سبعة أيام |
-| وظائف الطابعات | `New-MultiPrinter` (المنفذ والطابعة)، و`Remove-MultiPrinter`، و`Register-Watcher` (مهمة مجدولة)، و`Set-DefaultMultiPrinter`، و`Find-Sumatra` |
-| الواجهة (WPF) | ملف XAML للنافذة الرئيسية، وأجزاء XAML صغيرة تُبنى ديناميكيًا للبطاقات وصفوف السجل |
-| اللغات | يُستبدل `__STRINGS_JSON__` وقت البناء بمحتوى `strings.json`، وتُعيد الدالة `T 'key'` النص المناسب |
+| General utilities | `Get-Config`, `Save-Config`, `Get-Targets` and `Write-Log` |
+| Watcher (`-Watch`) | The `Start-Watcher` function: a loop every 0.7 seconds, a lock (Mutex) that prevents two instances from running, capturing the document name through `Get-PrintJob`, sending to each destination, writing to the history, and cleaning up files older than seven days |
+| Printer functions | `New-MultiPrinter` (port and printer), `Remove-MultiPrinter`, `Register-Watcher` (scheduled task), `Set-DefaultMultiPrinter` and `Find-Sumatra` |
+| UI (WPF) | A XAML file for the main window, and small XAML fragments built dynamically for the cards and history rows |
+| Languages | `__STRINGS_JSON__` is replaced at build time with the contents of `strings.json`, and the `T 'key'` function returns the matching text |
 
-### خدمة الطباعة (المهمة المجدولة `MultiPrint Watcher`)
-- تشغّل `C:\DualPrint\MultiPrint.exe --watch` بصلاحيات المستخدم العادي.
-- المشغّلات: عند تسجيل الدخول، وكل خمس دقائق لاستعادة الخدمة إذا توقفت.
-- الإعدادات: دون حد زمني، وتستمر عند العمل على البطارية، وتُعاد المحاولة بعد دقيقة عند الفشل.
-- يضمن الخيار `MultipleInstances IgnoreNew` مع القفل `Local\MultiPrintWatcher` تشغيل نسخة واحدة فقط.
+### Print service (the `MultiPrint Watcher` scheduled task)
+- Runs `C:\DualPrint\MultiPrint.exe --watch` with normal user rights.
+- Triggers: at logon, and every five minutes to restore the service if it has stopped.
+- Settings: no time limit, keeps running on battery power, and retries after one minute on failure.
+- The `MultipleInstances IgnoreNew` option together with the `Local\MultiPrintWatcher` lock ensures only one instance runs.
 
-## بنية الملف `printers.json`
+## Structure of `printers.json`
 ```json
 [
   {
-    "Name": "طباعة الفواتير",
+    "Name": "Invoice Printing",
     "Folder": "C:\\DualPrint\\queues\\q_638...",
     "Port": "C:\\DualPrint\\queues\\q_638...\\incoming.pdf",
     "Targets": ["EPSON L4150 Series", "Microsoft Print to PDF"],
     "PdfFolder": "D:\\Invoices",
-    "PdfPrefix": "فاتورة",
+    "PdfPrefix": "Invoice",
     "PaperSize": "A4",
     "PdfEnabled": true
   }
 ]
 ```
-الحقول الحديثة اختيارية؛ تتجاهلها الإصدارات القديمة وتحافظ عليها دون تعديل.
+Newer fields are optional; older versions ignore them and keep them unchanged.
 
-## بنية الملف `history.jsonl` (سطر لكل عملية)
+## Structure of `history.jsonl` (one line per job)
 ```json
-{"Time":"2026-11-02T15:42:10+03:00","Printer":"طباعة الفواتير","Doc":"فاتورة مبيعات.pdf",
+{"Time":"2026-11-02T15:42:10+03:00","Printer":"Invoice Printing","Doc":"Sales invoice.pdf",
  "Results":[{"Target":"EPSON L4150 Series","Ok":true,"Msg":"exit 0"},
-            {"Target":"Microsoft Print to PDF","Ok":true,"Msg":"D:\\Invoices\\فاتورة_….pdf"}]}
+            {"Target":"Microsoft Print to PDF","Ok":true,"Msg":"D:\\Invoices\\Invoice_….pdf"}]}
 ```
 
-## إضافة لغة جديدة
-1. انسخ كتلة `"en"` في `src/strings.json` باسم رمز اللغة (مثل `"tr"`) وترجم القيم.
-2. أضف اللغة في `MultiPrint.ps1` ضمن `Show-LanguagePicker` و`$CultureMap` و`$LangNames`.
-3. أعد بناء البرنامج.
+The samples above use English values; printer names, document names and file-name prefixes can also be non-English text (for example Arabic).
 
-## القيود المعروفة
-- لا تنتقل إعدادات نافذة الطباعة (عدد النسخ، والدرج وغيرها) إلى الطابعات الأخرى؛ إذ تطبع كل طابعة وفق إعدادها الافتراضي، باستثناء مقاس الورق إذا حُدّد.
-- يُستمد اسم المستند من Windows، ولا ترسله بعض التطبيقات، فيظهر حينها «مستند».
-- الملف غير موقّع رقميًا، لذا تظهر رسالة SmartScreen عند التشغيل الأول (انظر [PUBLISHING.md](PUBLISHING.md)).
+## Adding a new language
+1. Copy the `"en"` block in `src/strings.json` under the language code (for example `"tr"`) and translate the values.
+2. Add the language in `MultiPrint.ps1` in `Show-LanguagePicker`, `$CultureMap` and `$LangNames`.
+3. Rebuild the app.
 
-</div>
+## Known limitations
+- Print dialog settings (number of copies, tray, and so on) are not passed on to the other printers; each printer prints with its own default settings, except for the paper size if one is set.
+- The document name comes from Windows. Some applications do not send it, in which case "Document" is shown.
+- The file is not digitally signed, so a SmartScreen message appears on first run (see [PUBLISHING.md](PUBLISHING.md)).

@@ -1,95 +1,80 @@
-<div dir="rtl">
-
 # MultiPrint
 
-**اطبع على جميع طابعاتك في آنٍ واحد، مع حفظ نسخة PDF تلقائيًا.**
+**Print to all your printers at once, and save a PDF copy automatically.**
 
-يضيف MultiPrint إلى نظام Windows طابعة افتراضية واحدة. عند الطباعة عليها من أي تطبيق، مثل Word أو Excel أو المتصفح أو الأنظمة المحاسبية، يُرسَل المستند إلى جميع الطابعات المحددة في اللحظة نفسها، ويمكن حفظ نسخة PDF منه في مجلد ثابت دون أي نافذة حفظ.
+MultiPrint adds a single virtual printer to Windows. When you print to it from any application, such as Word, Excel, your browser or an accounting system, the document is sent to all the selected printers at the same moment, and a PDF copy can be saved to a fixed folder without any save dialog.
 
-> 🌐 **الموقع الرسمي:** يتوفر رابطه في خانة *About* أعلى هذه الصفحة، وهو متاح باللغات العربية والإنجليزية والروسية والألمانية والإسبانية والفرنسية.
+> 🌐 **Official website:** the link is in the *About* box at the top of this page. The site is available in Arabic, English, Russian, German, Spanish and French.
 
-![MultiPrint](website/assets/screenshot-ar.png)
+![MultiPrint](website/assets/screenshot-en.png)
 
-## التنزيل
+## Download
 
-نزّل أحدث إصدار من صفحة [Releases](../../releases/latest)، ثم فكّ ضغط الملف `MultiPrint.zip` وشغّل `MultiPrint.exe`.
+Download the latest version from the [Releases](../../releases/latest) page, extract `MultiPrint.zip`, run `MultiPrint.exe`, and approve the administrator prompt.
 
-> قد يعرض Windows عند التشغيل الأول رسالة «Windows protected your PC» لأن الملف غير موقّع رقميًا بعد. في هذه الحالة اختر **More info** ثم **Run anyway**.
+> On first run, Windows may show the message "Windows protected your PC" because the file is not digitally signed yet. If so, choose **More info**, then **Run anyway**.
 
-## المزايا
+## Features
 
-- طابعة افتراضية مرتبطة بطابعة واحدة أو أكثر من الطابعات المثبتة على الجهاز، مع إمكانية إضافة نسخة PDF.
-- حفظ تلقائي لملفات PDF في مجلد ثابت، مع إمكانية تحديد بداية اسم الملف (مثل `فاتورة_2026-11-02_15-45-00.pdf`).
-- إنشاء أكثر من طابعة متعددة، لكلٍّ منها طابعاتها ومجلدها وإعداداتها.
-- تحديد مقاس الورق لكل طابعة متعددة: A4 أو A3 أو A5 أو Letter أو Legal أو تلقائي.
-- سجل للطباعة يوضح اسم المستند ووجهاته ووقت طباعته ونتيجتها.
-- طباعة صفحة اختبار، والوصول إلى إعدادات أي طابعة، وتعيين الطابعة المتعددة طابعةً افتراضية.
-- خدمة تعمل في الخلفية مع بدء تشغيل Windows وتستعيد عملها تلقائيًا، فلا يلزم إبقاء البرنامج مفتوحًا.
-- واجهة بخمس لغات: العربية والإنجليزية والإسبانية والفرنسية والألمانية.
+- A virtual printer linked to one or more of the printers installed on the computer, with an optional PDF copy.
+- Automatic saving of PDF files to a fixed folder, with a custom file-name prefix (for example `Invoice_2026-11-02_15-45-00.pdf`).
+- Multiple multi-printers, each with its own printers, folder and settings.
+- Paper size per multi-printer: A4, A3, A5, Letter, Legal or Automatic.
+- A print history showing each document's name, destinations, print time and result.
+- Print a test page, open any printer's settings, and set a multi-printer as the default printer.
+- A background service that starts with Windows and recovers automatically, so the app does not need to stay open.
+- A user interface in five languages: Arabic, English, Spanish, French and German.
 
-## البدء السريع
+## Quick start
 
-1. شغّل البرنامج واختر اللغة (عند التشغيل الأول فقط).
-2. اختر **إضافة طابعة**، ثم أدخل اسمًا وحدّد الطابعات. وإذا أضفت PDF فاختر مجلد الحفظ، ثم اضغط **حفظ**.
-3. اطبع من أي تطبيق واختر الطابعة الجديدة باسمها.
+1. Run the app and choose a language (first run only).
+2. Choose **Add printer**, enter a name and select the printers. If you add PDF, choose the save folder, then click **Save**.
+3. Print from any application and select the new printer by its name.
 
-التفاصيل الكاملة في [دليل الاستخدام](docs/USER_GUIDE.md).
+Full details are in the [User Guide](docs/USER_GUIDE.md).
 
-## التوثيق
+## Documentation
 
-| الملف | المحتوى |
+| File | Contents |
 |---|---|
-| [docs/USER_GUIDE.md](docs/USER_GUIDE.md) | دليل الاستخدام |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | البنية التقنية وآلية العمل |
-| [docs/BUILDING.md](docs/BUILDING.md) | بناء البرنامج من الشيفرة المصدرية |
-| [docs/PUBLISHING.md](docs/PUBLISHING.md) | النشر على GitHub وإصدار النسخ والظهور في محركات البحث |
-| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | حل المشكلات الشائعة |
-| [SECURITY.md](SECURITY.md) | سياسة الأمان والإبلاغ عن الثغرات |
-| [CHANGELOG.md](CHANGELOG.md) | سجل الإصدارات |
+| [docs/USER_GUIDE.md](docs/USER_GUIDE.md) | User guide |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Technical architecture and how it works |
+| [docs/BUILDING.md](docs/BUILDING.md) | Building the app from source |
+| [docs/PUBLISHING.md](docs/PUBLISHING.md) | Publishing on GitHub, releasing versions and appearing in search engines |
+| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Solving common problems |
+| [SECURITY.md](SECURITY.md) | Security policy and vulnerability reporting |
+| [CHANGELOG.md](CHANGELOG.md) | Release history |
 
-## هيكل المشروع
+## Project structure
 
 ```
 multiprint/
 ├─ src/
-│  ├─ MultiPrint.ps1      ← البرنامج (الواجهة وخدمة الطباعة)
-│  ├─ strings.json        ← نصوص اللغات الخمس
-│  └─ Launcher.cs         ← الملف التنفيذي الذي يشغّل البرنامج
-├─ assets/icon.ico        ← أيقونة البرنامج
-├─ build.ps1              ← يبني build/MultiPrint.exe
-├─ website/               ← الموقع الرسمي (GitHub Pages)
-├─ tools/                 ← نصوص الموقع وأداة توليده
-├─ docs/                  ← التوثيق
-└─ .github/workflows/     ← البناء والنشر التلقائي
+│  ├─ MultiPrint.ps1      ← the app (UI and print service)
+│  ├─ strings.json        ← texts for the five languages
+│  └─ Launcher.cs         ← the executable that runs the app
+├─ assets/icon.ico        ← app icon
+├─ build.ps1              ← builds build/MultiPrint.exe
+├─ website/               ← official website (GitHub Pages)
+├─ tools/                 ← website texts and the site generator
+├─ docs/                  ← documentation
+└─ .github/workflows/     ← automated build and publishing
 ```
 
-## البناء من الشيفرة المصدرية
+## Building from source
 
-على نظام Windows، ودون الحاجة إلى تثبيت أي أدوات إضافية:
+On Windows, with no extra tools to install (the build uses the `csc.exe` compiler that ships with the built-in .NET Framework):
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\build.ps1 -Version 2.2.5
 ```
 
-يُنشأ الملف `build\MultiPrint.exe`. راجع [docs/BUILDING.md](docs/BUILDING.md) للتفاصيل.
+This creates `build\MultiPrint.exe`. See [docs/BUILDING.md](docs/BUILDING.md) for details.
 
-## الترخيص
+## License
 
-يُوزَّع البرنامج بموجب ترخيص [MIT](LICENSE). ولطباعة المستندات على الطابعات الفعلية، ينزّل البرنامج أداة [SumatraPDF](https://www.sumatrapdfreader.org) (ترخيص GPLv3) عند الحاجة، ولا تُضمَّن الأداة داخل المشروع.
-
-</div>
+The app is distributed under the [MIT](LICENSE) license. To print documents on physical printers, the app downloads [SumatraPDF](https://www.sumatrapdfreader.org) (GPLv3 license) when needed; the tool is not bundled with the project.
 
 ---
-
-## English
-
-![MultiPrint](website/assets/screenshot-en.png)
-
-**MultiPrint** adds a virtual printer to Windows that sends every print job to one or more printers at once, and can save a PDF copy to a fixed folder automatically.
-
-- **Download:** [latest release](../../releases/latest) → `MultiPrint.zip` → run `MultiPrint.exe` (approve the administrator prompt).
-- **Features:** multiple multi-printers, paper size per printer, automatic PDF with a custom file-name prefix, print history, test page, set as default printer, a background service that starts with Windows, and a UI in Arabic, English, Spanish, French and German.
-- **Build:** `powershell -ExecutionPolicy Bypass -File .\build.ps1 -Version 2.2.5` on Windows (uses the built-in .NET Framework `csc.exe`).
-- **License:** MIT. SumatraPDF (GPLv3) is downloaded at runtime and is not bundled.
 
 <sub>**Keywords:** print to multiple printers at once · print to two printers simultaneously · connect two printers · virtual printer · auto save PDF when printing · duplicate print job · الطباعة على أكثر من طابعة · ربط طابعتين · طابعة افتراضية · حفظ PDF تلقائي · печать на несколько принтеров одновременно · виртуальный принтер · auf mehreren Druckern gleichzeitig drucken · virtueller Drucker · imprimir en varias impresoras · imprimer sur plusieurs imprimantes</sub>

@@ -1,72 +1,68 @@
-<div dir="rtl">
+# User Guide
 
-# دليل الاستخدام
+## Requirements
+- Windows 10 or Windows 11 (64-bit).
+- Administrator rights to add printers; the app requests them automatically.
+- **Microsoft Print to PDF** enabled (it is enabled by default in Windows).
+- An internet connection on first use only, to download SumatraPDF, the tool used to print on physical printers.
 
-## المتطلبات
-- نظام Windows 10 أو Windows 11 (64 بت).
-- صلاحيات المسؤول (Administrator) لإضافة الطابعات، ويطلبها البرنامج تلقائيًا.
-- تفعيل **Microsoft Print to PDF**، وهو مفعّل افتراضيًا في Windows.
-- اتصال بالإنترنت عند الاستخدام الأول فقط، لتنزيل أداة SumatraPDF المستخدمة في الطباعة على الطابعات الفعلية.
+## Installation
+1. Download `MultiPrint.zip` from the Releases page and extract it.
+2. Run `MultiPrint.exe` and approve the permission prompt.
+3. If the message **Windows protected your PC** appears, choose **More info**, then **Run anyway**.
+4. Choose the interface language. You can change it later in **Settings**.
 
-## التثبيت
-1. نزّل الملف `MultiPrint.zip` من صفحة Releases وفكّ ضغطه.
-2. شغّل `MultiPrint.exe` ووافق على طلب الصلاحيات.
-3. إذا ظهرت رسالة **Windows protected your PC** فاختر **More info** ثم **Run anyway**.
-4. اختر لغة الواجهة، ويمكنك تغييرها لاحقًا من **الإعدادات**.
+The app copies itself to the `C:\DualPrint` folder and starts the print service in the background. You can keep the original executable anywhere.
 
-ينسخ البرنامج نفسه إلى المجلد `C:\DualPrint` ويشغّل خدمة الطباعة في الخلفية، ويمكنك الاحتفاظ بالملف التنفيذي الأصلي في أي موقع.
+## Creating a multi-printer
+1. On the **Printers** page, choose **Add printer**.
+2. **Printer name**: the name that will appear in the print dialog of every application, for example "Invoice Printing".
+3. **Print to**: choose one or more printers. For example, choosing a single printer plus PDF saving archives every document automatically. A green dot means the printer is connected; a red dot means it is offline.
+4. **Paper size**: leave it on "Automatic" so each printer uses its own default, or select a specific size.
+5. When you select **Microsoft Print to PDF**, the following fields appear:
+   - **PDF save folder**: files are saved here directly, with no "Save As" dialog.
+   - **File name prefix**: for example `Invoice`, which makes the file name `Invoice_2026-11-02_15-45-00.pdf`. If the field is left empty, the printer name is used.
+6. Click **Save**.
 
-## إنشاء طابعة متعددة
-1. من صفحة **الطابعات** اختر **إضافة طابعة**.
-2. **اسم الطابعة**: الاسم الذي سيظهر في قائمة الطباعة في جميع التطبيقات، مثل «طباعة الفواتير».
-3. **تطبع على**: اختر طابعة واحدة أو أكثر؛ فاختيار طابعة واحدة مع حفظ PDF مثلًا يتيح أرشفة كل مستند تلقائيًا. تشير النقطة الخضراء إلى أن الطابعة متصلة، والحمراء إلى أنها غير متصلة.
-4. **مقاس الورق**: اتركه «تلقائي» لتستخدم كل طابعة إعدادها الافتراضي، أو حدّد مقاسًا معينًا.
-5. عند اختيار **Microsoft Print to PDF** تظهر الحقول التالية:
-   - **مجلد حفظ ملفات PDF**: تُحفظ الملفات فيه مباشرة دون نافذة «حفظ باسم».
-   - **بداية اسم الملف**: مثل `فاتورة`، فيصبح اسم الملف `فاتورة_2026-11-02_15-45-00.pdf`. وإذا تُرك الحقل فارغًا يُستخدم اسم الطابعة.
-6. اضغط **حفظ**.
+## Printing
+In any application choose **Print**, select the multi-printer by its name, and click **Print**. The document reaches all the printers linked to it within a second or two.
 
-## الطباعة
-من أي تطبيق اختر **طباعة**، ثم حدّد الطابعة المتعددة باسمها واضغط **طباعة**. يصل المستند إلى جميع الطابعات المرتبطة بها خلال ثانية أو ثانيتين.
+If you create more than one multi-printer, each one works independently, and you choose the one you want in the print dialog.
 
-إذا أنشأت أكثر من طابعة متعددة، فإن كل واحدة منها تعمل باستقلال، وتحدد أنت الطابعة المطلوبة من نافذة الطباعة.
-
-## بطاقة الطابعة
-| العنصر | الوظيفة |
+## Printer card
+| Item | What it does |
 |---|---|
-| ✏ بجوار الاسم / **تعديل** | تعديل الاسم والطابعات والمقاس ومجلد PDF، أو **حذف** الطابعة |
-| شارة **جاهزة** | جميع الطابعات المرتبطة متصلة، أو عدد الطابعات غير المتصلة |
-| شارة **افتراضية** | هذه الطابعة هي الطابعة الافتراضية في Windows |
-| **إعدادات الطابعة** | يفتح إعدادات Windows للطابعة المحددة |
-| **تغيير المجلد** | يغيّر مجلد حفظ ملفات PDF |
-| **مقاس الورق** | يُحفظ التغيير فورًا |
-| **حفظ PDF تلقائيًا** | يوقف نسخة PDF مؤقتًا أو يعيد تشغيلها دون حذفها |
-| **طباعة صفحة اختبار** | يرسل صفحة اختبار Windows إلى الطابعة المتعددة |
-| **تعيين كطابعة افتراضية** | يجعل الطابعة المتعددة الطابعة الافتراضية في Windows |
+| ✏ next to the name / **Edit** | Edit the name, printers, paper size and PDF folder, or **Delete** the printer |
+| **Ready** badge | All linked printers are connected; otherwise it shows the number of offline printers |
+| **Default** badge | This printer is the Windows default printer |
+| **Printer settings** | Opens the Windows settings for the selected printer |
+| **Change folder** | Changes the PDF save folder |
+| **Paper size** | The change is saved immediately |
+| **Save PDF automatically** | Pauses or resumes the PDF copy without removing it |
+| **Print test page** | Sends a Windows test page to the multi-printer |
+| **Set as default** | Makes the multi-printer the Windows default printer |
 
-## سجل الطباعة
-- تعرض صفحة **الطابعات** آخر خمس عمليات.
-- تعرض صفحة **سجل الطباعة** آخر 200 عملية مع اسم الطابعة.
-- حالات العملية: **مكتملة** (وصلت إلى جميع الوجهات)، و**جزئية** (وصلت إلى بعضها)، و**فشلت**. مرّر المؤشر فوق الحالة لعرض تفاصيل كل وجهة.
+## Print history
+- The **Printers** page shows the last five jobs.
+- The **Print history** page shows the last 200 jobs, with the printer name.
+- Job statuses: **Completed** (reached all destinations), **Partial** (reached some of them) and **Failed**. Hover over the status to see the details for each destination.
 
-## الإعدادات
-- **اللغة**.
-- **خدمة الطباعة**: اختر **إعادة التشغيل** إذا توقفت الطباعة.
-- **السجل التفصيلي**: ملف نصي يتضمن تفاصيل كل عملية وأي أخطاء.
-- **إزالة الكل**: يحذف جميع الطابعات التي أنشأها البرنامج ويوقف الخدمة، ولا يحذف ملفات PDF المحفوظة.
+## Settings
+- **Language**.
+- **Print service**: choose **Restart** if printing stops.
+- **Detailed log**: a text file with details of every job and any errors.
+- **Remove all**: deletes every printer the app created and stops the service. Saved PDF files are not deleted.
 
-## مواقع الملفات
-تُحفظ جميع البيانات في المجلد `C:\DualPrint`، وتشترك فيها جميع إصدارات البرنامج على الجهاز، ولا تتأثر بالتحديث:
+## File locations
+All data is stored in the `C:\DualPrint` folder. It is shared by all versions of the app on the computer and is not affected by updates:
 
-| الملف | المحتوى |
+| File | Contents |
 |---|---|
-| `printers.json` | الطابعات المتعددة وإعداداتها |
-| `settings.json` | اللغة |
-| `history.jsonl` | سجل الطباعة |
-| `log.txt` | السجل التفصيلي |
-| `MultiPrint.exe` | نسخة الخدمة التي تعمل في الخلفية |
+| `printers.json` | Multi-printers and their settings |
+| `settings.json` | Language |
+| `history.jsonl` | Print history |
+| `log.txt` | Detailed log |
+| `MultiPrint.exe` | The copy of the service that runs in the background |
 
-## إلغاء التثبيت
-من **الإعدادات** اختر **إزالة الكل**، ثم احذف المجلد `C:\DualPrint` والملف التنفيذي.
-
-</div>
+## Uninstalling
+In **Settings**, choose **Remove all**, then delete the `C:\DualPrint` folder and the executable.
