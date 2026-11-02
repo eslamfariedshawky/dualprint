@@ -173,6 +173,7 @@ This behavior exists today (CHANGELOG 2.0.6), so it must not regress. It costs l
   (f) `docs/seo/*` (the SEO migration plan and keyword notes, which must name the old brand);
   (g) the single per-page mention allowed by AC-5.2 (`alternateName` or "formerly MultiPrint", not both), in `website/` and its generator source.
   (h) the Owner-approved `MultiPrint.zip` compatibility alias in the release workflow, its checksum generation, verification, and documentation (AC-6.3).
+  (i) legacy test fixtures and assertions in `tests/LegacyUpgrade.Tests.ps1`, and migration/release validation evidence in `docs/qa/*`, where the old name identifies the legacy behavior or compatibility asset being verified.
   QA attaches the command output.
 
 ### US-8. Repo and site URL
