@@ -1,4 +1,4 @@
-# يحدّث إصدارات GitHub Actions تلقائيًا (إصلاحات أمنية)
+# Keeps GitHub Actions versions up to date automatically (security fixes)
 version: 2
 updates:
   - package-ecosystem: github-actions

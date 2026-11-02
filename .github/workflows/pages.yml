@@ -1,6 +1,6 @@
-# ينشر فولدر website/ على GitHub Pages.
-# فعّلها مرة واحدة: Settings ← Pages ← Source: GitHub Actions
-# رابط الموقع ورابط الـ repo بيتكتبوا تلقائيًا هنا — مش محتاج تعدّل أي ملف.
+# Publishes the website/ folder to GitHub Pages.
+# Enable it once: Settings > Pages > Source: GitHub Actions
+# The site URL and repo URL are filled in automatically here, so no file needs editing.
 name: Website
 
 on:
