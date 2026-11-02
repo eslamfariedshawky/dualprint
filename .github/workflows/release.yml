@@ -1,6 +1,6 @@
-# يبني MultiPrint.exe على Windows.
-# - أي push أو pull request: يبني البرنامج ويرفعه كـ artifact للتجربة (بصلاحية قراءة فقط).
-# - عند إنشاء tag يبدأ بـ v (مثل v2.1.2): ينشئ Release ويضيف MultiPrint.zip.
+# Builds MultiPrint.exe on Windows.
+# - Any push or pull request: builds the app and uploads it as an artifact for testing (read-only permissions).
+# - When a tag starting with v is created (e.g. v2.1.2): creates a Release and attaches MultiPrint.zip.
 name: Build & Release
 
 on:
