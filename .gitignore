@@ -4,3 +4,8 @@ build/
 !assets/*
 .vs/
 Thumbs.db
+
+# Secrets: never commit environment files (examples with empty values are fine)
+.env
+.env.*
+!.env.example
