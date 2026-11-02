@@ -1,4 +1,4 @@
-# DualPrint - a virtual printer that prints to several printers at the same time
+﻿# DualPrint - a virtual printer that prints to several printers at the same time
 param([switch]$Watch)
 
 trap {
@@ -38,7 +38,6 @@ $LegacyDefaultPdf = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Mul
 $LegacyTaskNames  = @('MultiPrint Watcher', 'DualPrint Watcher')
 $LegacyMutexNames = @('Local\MultiPrintWatcher', 'Local\DualPrintWatcher')
 $LegacyExe        = Join-Path $Root 'MultiPrint.exe'
-$OldTaskName      = 'DualPrint Watcher'   # Legacy 1.x task; still read by Stop-Watchers and Update-WatcherIfNeeded
 
 # ================================================================ General helpers
 function Write-Log([string]$m) {
@@ -84,6 +83,44 @@ function Save-Config($items) {
     ConvertTo-Json -InputObject @($items) -Depth 5 | Set-Content -Path $ConfigPath -Encoding UTF8
 }
 
+# Empty folders belong to legacy printers; new PDF printers always save an explicit folder.
+function Get-PdfFolder($cfg) {
+    if ($cfg.PdfFolder) { return $cfg.PdfFolder }
+    return $LegacyDefaultPdf
+}
+
+function Pin-LegacyPdfFolders {
+    $all = @(Get-Config)
+    if ($script:ConfigError) { return }
+    $changed = $false
+    foreach ($c in $all) {
+        if ((@(Get-Targets $c) -contains $PdfTarget) -and -not $c.PdfFolder) {
+            $c | Add-Member -NotePropertyName PdfFolder -NotePropertyValue $LegacyDefaultPdf -Force
+            $changed = $true
+        }
+    }
+    if (-not $changed) { return }
+    # Only this upgrade migration needs atomic replacement: a failed/partial temp write must leave the original intact.
+    $temporary = Join-Path (Split-Path $ConfigPath -Parent) ('.printers-upgrade-' + [guid]::NewGuid().ToString('N') + '.tmp')
+    try {
+        ConvertTo-Json -InputObject @($all) -Depth 5 | Set-Content -LiteralPath $temporary -Encoding UTF8 -ErrorAction Stop
+        [IO.File]::Replace($temporary, $ConfigPath, [NullString]::Value)
+        Write-Log 'Pinned legacy PDF folder for upgraded printers'
+    } finally {
+        if (Test-Path -LiteralPath $temporary) { Remove-Item -LiteralPath $temporary -Force -ErrorAction SilentlyContinue }
+    }
+}
+
+function Get-AppVersionText {
+    if ($AppExe -like '*.exe') {
+        try {
+            $v = [Diagnostics.FileVersionInfo]::GetVersionInfo($AppExe)
+            return 'DualPrint {0}.{1}.{2}' -f $v.FileMajorPart, $v.FileMinorPart, $v.FileBuildPart
+        } catch { Write-Log "Could not read app version: $_" }
+    }
+    return 'DualPrint'
+}
+
 # ================================================================ Watcher (runs in the background)
 function Test-FileReady([string]$p) {
     try {
@@ -102,7 +139,7 @@ function Add-History([string]$printer, [string]$doc, $results) {
 
 function Send-ToTarget($cfg, [string]$file, [string]$target) {
     if ($target -eq $PdfTarget) {
-        $dir = if ($cfg.PdfFolder) { $cfg.PdfFolder } else { $DefaultPdf }
+        $dir = Get-PdfFolder $cfg
         New-Item -ItemType Directory -Force -Path $dir | Out-Null
         $base = if ($cfg.PdfPrefix) { $cfg.PdfPrefix } else { $cfg.Name }
         $safe = ($base -replace '[\\/:*?"<>|]', '_')
@@ -139,24 +176,44 @@ function Get-JobDocName([string]$printer) {
 
 function Start-Watcher {
     New-Item -ItemType Directory -Force -Path $Root | Out-Null
-    $mutex = New-Object Threading.Mutex($false, $ServiceMutexName)
+    $mutex = New-Object Threading.Mutex -ArgumentList $false, $ServiceMutexName
     $got = $false
+    $readyMutex = $null; $readyOwned = $false
+    $script:LegacyLocks = @{}
+    try {
     try { $got = $mutex.WaitOne(0) }
     catch [Threading.AbandonedMutexException] { $got = $true }   # Previous instance was killed - the lock is now ours
-    catch { $got = $true }
     if (-not $got) { $global:WatcherAlreadyRunning = $true; return }
-    # Also take the legacy (DualPrint) lock so that if an old version is opened, its service does not run alongside this one
-    $oldMutex = New-Object Threading.Mutex($false, 'Local\DualPrintWatcher')
-    try { [void]$oldMutex.WaitOne(0) } catch {}
     Write-Log "Watcher started (pid $PID)"
     $lastClean = Get-Date
     $lastBeat = [datetime]::MinValue
+    $lastLegacyKill = [datetime]::MinValue
     $docNames = @{}
-    try {
     while ($true) {
         if (((Get-Date) - $lastBeat).TotalMinutes -ge 1) {
             try { [IO.File]::WriteAllText((Join-Path $Root 'heartbeat.txt'), (Get-Date).ToString('o')) } catch {}
             $lastBeat = Get-Date
+        }
+        if (-not (Ensure-LegacyLocks)) {
+            # A legacy watcher is still printing. Never read jobs until every legacy lock is ours.
+            if (((Get-Date) - $lastLegacyKill).TotalSeconds -ge 60) {
+                foreach ($p in @(Get-LegacyWatcherProcesses)) {
+                    try { Stop-Process -Id $p.ProcessId -Force -ErrorAction Stop }
+                    catch { Write-Log "Could not stop legacy pid $($p.ProcessId): $_" }
+                }
+                $lastLegacyKill = Get-Date
+                Write-Log 'Legacy watcher holds a lock; waiting'
+            }
+            Start-Sleep -Milliseconds 700
+            continue
+        }
+        if (-not $readyMutex) {
+            # Publish readiness only after all legacy locks; a waiting primary lock is not a running service.
+            # Initial ownership makes creation and publication atomic; never expose a newly created unowned signal.
+            $readyCreated = $false
+            $readyMutex = New-Object Threading.Mutex -ArgumentList $true, ($ServiceMutexName + '.Ready'), ([ref]$readyCreated)
+            $readyOwned = $readyCreated
+            if (-not $readyOwned) { throw 'Service readiness lock unavailable' }
         }
         try {
             foreach ($cfg in Get-Config) {
@@ -201,9 +258,47 @@ function Start-Watcher {
         Start-Sleep -Milliseconds 700
     }
     } finally {
+        if ($readyMutex) {
+            if ($readyOwned) { try { $readyMutex.ReleaseMutex() } catch { Write-Log "Ready lock release: $_" } }
+            $readyMutex.Dispose()
+        }
+        foreach ($m in $script:LegacyLocks.Values) {
+            try { $m.ReleaseMutex() } catch { Write-Log "Legacy lock release: $_" }
+            $m.Dispose()
+        }
+        $script:LegacyLocks = @{}
+        if ($got) { try { $mutex.ReleaseMutex() } catch { Write-Log "Service lock release: $_" } }
+        $mutex.Dispose()
         Write-Log "Watcher stopped (pid $PID)"
-        try { $mutex.ReleaseMutex() } catch {}
     }
+}
+
+# Legacy (v2.x MultiPrint and 1.x DualPrint) — match watcher arguments, never an ordinary UI or another script.
+function Get-LegacyWatcherProcesses {
+    $scriptPath = [regex]::Escape((Join-Path $Root 'DualPrint.ps1'))
+    # Only the -File invocation runs the legacy script. Reject -Command strings and script-path suffixes.
+    $psWatch = '^\s*(?:"[^"]*powershell\.exe"|\S*powershell\.exe)\s+' +
+        '(?:(?:-NoProfile|-NonInteractive|-NoLogo|-STA|-MTA)\s+|-(?:ExecutionPolicy|WindowStyle)\s+\S+\s+)*' +
+        '-File\s+(?:"' + $scriptPath + '"|' + $scriptPath + ')\s+-Watch\s*$'
+    # Legacy (v2.x MultiPrint) executable name is retained solely for upgrade compatibility.
+    Get-CimInstance Win32_Process -Filter "Name='MultiPrint.exe' OR Name='powershell.exe'" -ErrorAction SilentlyContinue |
+        Where-Object { $_.ProcessId -ne $PID -and $_.CommandLine -and (
+            # Legacy (v2.x MultiPrint) — require an entire --watch argument, not a prefix or quoted prose.
+            ($_.Name -eq 'MultiPrint.exe' -and @([regex]::Matches($_.CommandLine, '"[^"]*"|\S+') | ForEach-Object { $_.Value.Trim('"') }) -contains '--watch') -or
+            ($_.Name -eq 'powershell.exe' -and $_.CommandLine -match $psWatch)) }
+}
+
+function Ensure-LegacyLocks {
+    foreach ($name in $LegacyMutexNames) {
+        if ($script:LegacyLocks.ContainsKey($name)) { continue }
+        $m = New-Object Threading.Mutex -ArgumentList $false, $name
+        $owned = $false
+        try { $owned = $m.WaitOne(0) }
+        catch [Threading.AbandonedMutexException] { $owned = $true }
+        catch { Write-Log "Legacy lock unavailable (${name}): $_" }
+        if ($owned) { $script:LegacyLocks[$name] = $m } else { $m.Dispose() }
+    }
+    return ($script:LegacyLocks.Count -eq $LegacyMutexNames.Count)
 }
 
 if ($Watch) {
@@ -451,22 +546,64 @@ function Test-PrinterName([string]$n) {
     return ($n -and $n.Length -le 200 -and $n -notmatch '[\\,"<>|*?:/]' -and $n.Trim() -eq $n)
 }
 
-function Stop-Watchers {
-    foreach ($t in @($TaskName, $OldTaskName)) {
-        try { Stop-ScheduledTask -TaskName $t -ErrorAction SilentlyContinue } catch {}
+
+
+function Remove-LegacyServices {
+    $found = $false
+    foreach ($name in $LegacyTaskNames) {
+        if (-not (Get-ScheduledTask -TaskName $name -ErrorAction SilentlyContinue)) { continue }
+        $found = $true
+        # Disable before stopping: legacy triggers otherwise restart every minute.
+        try { Disable-ScheduledTask -TaskName $name -ErrorAction Stop | Out-Null }
+        catch { Write-Log "Could not disable legacy task ${name}: $_" }
+        try { Stop-ScheduledTask -TaskName $name -ErrorAction Stop }
+        catch { Write-Log "Could not stop legacy task ${name}: $_" }
+        try { Unregister-ScheduledTask -TaskName $name -Confirm:$false -ErrorAction Stop; Write-Log "Removed legacy task: $name" }
+        catch { Write-Log "Could not remove legacy task ${name}: $_" }
     }
-    try { Unregister-ScheduledTask -TaskName $OldTaskName -Confirm:$false -ErrorAction SilentlyContinue } catch {}
-    # Legacy (v2.x MultiPrint) — kept for upgrade compatibility: stops an old MultiPrint.exe --watch
-    Get-CimInstance Win32_Process -Filter "Name='MultiPrint.exe' OR Name='powershell.exe'" -ErrorAction SilentlyContinue |
-        Where-Object { $_.ProcessId -ne $PID -and (
-            ($_.Name -eq 'MultiPrint.exe' -and $_.CommandLine -match '\s--watch\b') -or
-            ($_.Name -eq 'powershell.exe' -and $_.CommandLine -match 'DualPrint\\DualPrint\.ps1' -and $_.CommandLine -match '-Watch')) } |
-        ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue } catch {} }
+    foreach ($p in @(Get-LegacyWatcherProcesses)) {
+        $found = $true
+        try { Stop-Process -Id $p.ProcessId -Force -ErrorAction Stop }
+        catch { Write-Log "Could not stop legacy pid $($p.ProcessId): $_" }
+    }
+    if ($found) { Start-Sleep -Milliseconds 700 }
+    return $found
+}
+
+function Stop-OwnService {
+    try { Stop-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue }
+    catch { Write-Log "Could not stop service task: $_" }
+    Get-CimInstance Win32_Process -Filter "Name='DualPrint.exe'" -ErrorAction SilentlyContinue |
+        Where-Object { $_.ProcessId -ne $PID -and $_.Name -eq 'DualPrint.exe' -and $_.ExecutablePath -eq $RootExe -and $_.CommandLine -and
+            @([regex]::Matches($_.CommandLine, '"[^"]*"|\S+') | ForEach-Object { $_.Value.Trim('"') }) -contains '--watch' } |
+        ForEach-Object {
+            try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop }
+            catch { Write-Log "Could not stop service pid $($_.ProcessId): $_" }
+        }
     Start-Sleep -Milliseconds 700
 }
 
+function Retire-LegacyExe {
+    if (-not (Test-Path -LiteralPath $LegacyExe)) { return }
+    $destination = "$LegacyExe.old"
+    # Preserve every rollback copy if an old UI has copied its executable back again.
+    if (Test-Path -LiteralPath $destination) { $destination += '.' + [guid]::NewGuid().ToString('N') }
+    try { Move-Item -LiteralPath $LegacyExe -Destination $destination -ErrorAction Stop; Write-Log "Retired legacy exe to $destination" }
+    catch { Write-Log "Could not retire legacy exe: $_" }
+}
+
+function Wait-ServiceRunning([int]$seconds = 10) {
+    $until = (Get-Date).AddSeconds($seconds)
+    while ((Get-Date) -lt $until) {
+        if (Test-ServiceRunning) { return $true }
+        Start-Sleep -Milliseconds 500
+    }
+    return $false
+}
+
 function Register-Watcher {
-    Stop-Watchers
+    $null = Remove-LegacyServices
+    Stop-OwnService
     Protect-RootFolder
     if ($AppExe -ne $RootExe) { Copy-Item $AppExe $RootExe -Force }
     $user = "$env:USERDOMAIN\$env:USERNAME"
@@ -493,6 +630,7 @@ function New-MultiPrinter([string]$name, [string[]]$targets, [string]$pdfFolder,
     if (@($targets | Where-Object { $_ -match '"' }).Count) { throw (T 'err_badname') }
     if (Get-Printer -Name $name -ErrorAction SilentlyContinue) { throw (T 'err_exists') }
     if (-not (Get-PrinterDriver -Name $Driver -ErrorAction SilentlyContinue)) { throw (T 'err_driver' $Driver) }
+    if ($targets -contains $PdfTarget -and -not $pdfFolder) { $pdfFolder = $DefaultPdf }
     $folder = Join-Path $Root ("queues\q_" + (Get-Date).Ticks)
     New-Item -ItemType Directory -Force -Path $folder | Out-Null
     $port = Join-Path $folder 'incoming.pdf'
@@ -519,7 +657,8 @@ function Remove-MultiPrinter([string]$name) {
 
 function Uninstall-All {
     foreach ($c in @(Get-Config)) { Remove-MultiPrinter $c.Name }
-    Stop-Watchers
+    $null = Remove-LegacyServices
+    Stop-OwnService
     try { Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction SilentlyContinue } catch {}
 }
 
@@ -553,13 +692,17 @@ function Get-PrinterSnapshot {
 
 function Get-PrinterStates { return (Get-PrinterSnapshot).States }
 
-# Instant check: the service holds a lock with a fixed name, so if the lock exists the service is running (instead of searching all processes)
+# A waiting watcher owns the primary lock but cannot print. Require the readiness lock as well.
 function Test-ServiceRunning {
-    $m = $null
+    $m = $null; $ready = $null
     try {
-        if ([Threading.Mutex]::TryOpenExisting($ServiceMutexName, [ref]$m)) { $m.Dispose(); return $true }
-    } catch [UnauthorizedAccessException] { return $true } catch {}
-    return $false
+        return ([Threading.Mutex]::TryOpenExisting($ServiceMutexName, [ref]$m) -and
+            [Threading.Mutex]::TryOpenExisting(($ServiceMutexName + '.Ready'), [ref]$ready))
+    } catch { return $false }
+    finally {
+        if ($ready) { $ready.Dispose() }
+        if ($m) { $m.Dispose() }
+    }
 }
 
 function Get-DefaultPrinterName {
@@ -936,7 +1079,7 @@ $xamlText = @'
             </Grid>
           </StackPanel>
         </Border>
-        <TextBlock Text="DualPrint" Foreground="#94A3B8" Margin="4,14,0,0"/>
+        <TextBlock x:Name="TxtVersion" FlowDirection="LeftToRight" Foreground="#94A3B8" Margin="4,14,0,0"/>
       </StackPanel>
     </ScrollViewer>
 
@@ -1010,12 +1153,13 @@ foreach ($n in 'SvcBox','SvcDot','SvcText','NavPrinters','NavHistory','NavSettin
                'BtnAdd','PrintersList','BtnViewLog','Chev','RecentHeader','RecentRows','FooterIcon','FooterText',
                'HistoryHeader','HistoryRows','LangNow','BtnLang','BtnRestartSvc','BtnLog','BtnRemoveAll',
                'Overlay','EdTitle','BtnSave','BtnCancel','BtnDelete','TxtName','EdTargets','CmbPaper','PdfPanel',
-               'TxtPdf','BtnBrowse','TxtPrefix','TxtExample','Toast','ToastText') {
+               'TxtPdf','BtnBrowse','TxtPrefix','TxtExample','Toast','ToastText','TxtVersion') {
     Set-Variable -Name $n -Value $win.FindName($n)
 }
 $win.MaxHeight = [Windows.SystemParameters]::WorkArea.Height
 $Chev.Text = if ($Lang -eq 'ar') { [string][char]0xE76B } else { [string][char]0xE76C }
 $LangNow.Text = $LangNames[$Lang]
+$TxtVersion.Text = Get-AppVersionText
 
 # ---------------------------------------------------------------- Messages
 $ToastTimer = New-Object Windows.Threading.DispatcherTimer
@@ -1123,7 +1267,7 @@ function New-EmptyText([string]$t) {
 function New-TargetCard([string]$target, $cfg, $states) {
     if ($target -eq $PdfTarget) {
         $on = $cfg.PdfEnabled -ne $false
-        $folder = if ($cfg.PdfFolder) { $cfg.PdfFolder } else { $DefaultPdf }
+        $folder = Get-PdfFolder $cfg
         $short = (($folder -split '\\') | Select-Object -Last 2) -join ' / '
         $dot = if ($on) { '#7C3AED' } else { '#94A3B8' }
         $st = if ($on) { T 'pdf_auto' } else { T 'pdf_off' }
@@ -1561,7 +1705,7 @@ function Open-Editor($name) {
         [void]$EdTargets.Children.Add($cb)
     }
     Fill-Paper $CmbPaper $(if ($cfg -and $cfg.PaperSize) { $cfg.PaperSize } else { 'auto' })
-    $TxtPdf.Text = if ($cfg -and $cfg.PdfFolder) { $cfg.PdfFolder } else { $DefaultPdf }
+    $TxtPdf.Text = if ($cfg) { Get-PdfFolder $cfg } else { $DefaultPdf }
     $TxtPrefix.Text = if ($cfg -and $cfg.PdfPrefix) { $cfg.PdfPrefix } else { '' }
     Update-PdfPanel; Update-Example
     $Overlay.Visibility = 'Visible'
@@ -1715,11 +1859,13 @@ function Test-RootOpen {
 
 function Update-WatcherIfNeeded {
     try { if (Test-RootOpen) { Protect-RootFolder } } catch { Write-Log "ACL check: $_" }
+    try { Pin-LegacyPdfFolders } catch { Write-Log "PDF folder pin: $_" }
+    $legacy = $false
+    try { $legacy = Remove-LegacyServices } catch { Write-Log "Legacy clean-up: $_" }
     if (@(Get-Config).Count -eq 0) { try { Refresh-Service } catch {}; return }
     try {
         $task = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
-        $oldTask = Get-ScheduledTask -TaskName $OldTaskName -ErrorAction SilentlyContinue
-        $needs = (-not $task) -or $oldTask -or ($task.Actions[0].Execute -ne $RootExe) -or (-not (Test-Path $RootExe)) -or (@($task.Triggers).Count -lt 2) -or (@($task.Triggers | Where-Object { $_.Repetition.Interval -eq 'PT1M' }).Count -eq 0)
+        $needs = $legacy -or (-not $task) -or ($task.Actions[0].Execute -ne $RootExe) -or (-not (Test-Path $RootExe)) -or (@($task.Triggers).Count -lt 2) -or (@($task.Triggers | Where-Object { $_.Repetition.Interval -eq 'PT1M' }).Count -eq 0)
         if (-not $needs -and $AppExe -ne $RootExe) {
             $a = Get-Item $AppExe; $b = Get-Item $RootExe
             $needs = ($a.Length -ne $b.Length) -or ($a.VersionInfo.FileVersion -ne $b.VersionInfo.FileVersion) -or
@@ -1727,6 +1873,8 @@ function Update-WatcherIfNeeded {
         }
         if ($needs) { Register-Watcher }
         elseif (-not (Test-ServiceRunning)) { Start-ScheduledTask -TaskName $TaskName }
+        if (Wait-ServiceRunning) { Retire-LegacyExe }
+        else { Write-Log 'Service not confirmed; legacy exe kept' }
     } catch { Write-Log "Watcher upgrade: $_" }
     Refresh-Service
 }
