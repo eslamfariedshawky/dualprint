@@ -1,31 +1,34 @@
-# Building from Source
+# Building DualPrint from source
 
-## On your computer (Windows)
-The build does not need Visual Studio or any extra tools; it uses the `csc.exe` compiler that ships with the .NET Framework in Windows.
+Use Windows 10/11 with Windows PowerShell and .NET Framework 4.x. `build.ps1` uses the Windows `csc.exe`; Visual Studio and a dependency install are not required. Start in the repository root.
 
 ```powershell
-git clone https://github.com/<account-name>/multiprint.git
-cd multiprint
-powershell -ExecutionPolicy Bypass -File .\build.ps1 -Version 2.2.5
+powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1 -Version 3.0.0
 ```
 
-Output:
-- `build\MultiPrint.exe`: the app.
-- `build\MultiPrint.zip`: the package ready for distribution.
-- `build\MultiPrint.ps1`: the app after the language texts are merged in (for review).
+The build reads `src/DualPrint.ps1`, embeds `src/strings.json`, applies the version to `src/Launcher.cs`, compiles the launcher and creates:
 
-## What `build.ps1` does
-1. Reads `src\MultiPrint.ps1` and puts the contents of `src\strings.json` in place of `__STRINGS_JSON__`.
-2. Adds the version number to `Launcher.cs`.
-3. Compiles the file with `csc.exe`, embedding the app and the icon.
-4. Compresses the executable into a zip package.
+- `build/DualPrint.exe` (file version `3.0.0.0`).
+- `build/DualPrint.zip`, containing exactly `DualPrint.exe`.
+- `build/DualPrint.ps1` and `build/Launcher.cs`, generated intermediates for inspection.
 
-## Building on GitHub (automatically)
-The `.github/workflows/release.yml` file runs the same steps on a GitHub-hosted Windows machine:
-- On any update to the `main` branch: the app is built and made available under the **Actions** tab → latest run → **Artifacts**.
-- When a tag such as `v2.1.2` is created: the app is built and a **Release** containing `MultiPrint.zip` is created.
+The local build produces only canonical outputs. It does not create or update the `MultiPrint.zip` compatibility alias. No application environment variables or `.env` file are required.
 
-## Before accepting any change
-- [ ] `strings.json` has the same keys in all five languages.
-- [ ] Tested: adding a printer, editing, printing to the multi-printer, saving the PDF to the folder, and the job appearing in the history.
-- [ ] `CHANGELOG.md` has been updated.
+## Tests and packaging checks
+
+Use the already-installed Pester version supported by the repository (the recorded baseline is Pester 3.4.0):
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-Pester -EnableExit"
+powershell -NoProfile -ExecutionPolicy Bypass -File .github/scripts/verify-release.ps1
+```
+
+The tests import function ASTs and mock machine operations; they do not launch the UI or establish real printer delivery. The verification script runs the workflow build and packaging logic locally, checks archive contents/version, equal alias bytes, both checksums and release-note selection. Its temporary fixtures and outputs stay under ignored `build/`; it publishes nothing. No standalone lint or type-check command is configured.
+
+Before release, complete the real Windows upgrade, task/logon, UI, exactly-once printing, uninstall and rollback checks described in [the validation record](qa/T012-upgrade-validation.md). Automated checks do not replace these checks.
+
+## CI behavior
+
+[Build & Release](../.github/workflows/release.yml) builds on pull requests, manual dispatch, qualifying pushes to `main`, and pushed `v*` tags. Main pushes changing only `website/**`, `docs/**` or root `*.md` files are ignored. Non-tag builds use version `0.0.0`; use a numeric release tag such as `v3.0.0` for release versioning.
+
+Every run uploads the **DualPrint** artifact containing both zips and `SHA256SUMS.txt`. Only tag runs execute the publishing job. Creating a Release through the GitHub UI alone is not the workflow trigger. See [Publishing](PUBLISHING.md).

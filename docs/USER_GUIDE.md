@@ -7,12 +7,20 @@
 - An internet connection on first use only, to download SumatraPDF, the tool used to print on physical printers.
 
 ## Installation
-1. Download `MultiPrint.zip` from the Releases page and extract it.
-2. Run `MultiPrint.exe` and approve the permission prompt.
+1. Download `DualPrint.zip` from the Releases page and extract it.
+2. Run `DualPrint.exe` and approve the permission prompt.
 3. If the message **Windows protected your PC** appears, choose **More info**, then **Run anyway**.
 4. Choose the interface language. You can change it later in **Settings**.
 
 The app copies itself to the `C:\DualPrint` folder and starts the print service in the background. You can keep the original executable anywhere.
+
+## Upgrading from MultiPrint or DualPrint 1.x
+
+Close the old app window, extract the new archive and run `DualPrint.exe` once as administrator. Do not use **Remove all** to upgrade. The data folder stays at `C:\DualPrint`: printers, settings, saved language, history, queue paths and custom PDF destinations are preserved. The old scheduled tasks are removed and replaced by **DualPrint Service**.
+
+New PDF printers default to `Documents\DualPrint PDFs` under your Windows Documents folder. Existing printers keep their saved folder, including `Documents\MultiPrint PDFs`. Existing PDF printers with an empty saved folder continue using the old default; the upgrade records that destination explicitly when possible. Existing PDFs are not moved or renamed.
+
+After the new service is ready, the installed `MultiPrint.exe` is preserved as `C:\DualPrint\MultiPrint.exe.old` (or `.old.<guid>` if a rollback copy already exists). A failed start or rename leaves it in place for retry. Unpin old MultiPrint shortcuts and pin `C:\DualPrint\DualPrint.exe` instead. Keep the rollback copy until you have checked printing. See [manual rollback](TROUBLESHOOTING.md#manual-rollback-to-multiprint-225) if needed.
 
 ## Creating a multi-printer
 1. On the **Printers** page, choose **Add printer**.
@@ -25,7 +33,7 @@ The app copies itself to the `C:\DualPrint` folder and starts the print service 
 6. Click **Save**.
 
 ## Printing
-In any application choose **Print**, select the multi-printer by its name, and click **Print**. The document reaches all the printers linked to it within a second or two.
+In any application choose **Print**, select the multi-printer by its name, and click **Print**. The service sends the document to each linked destination; delivery time depends on the printers and document.
 
 If you create more than one multi-printer, each one works independently, and you choose the one you want in the print dialog.
 
@@ -53,6 +61,8 @@ If you create more than one multi-printer, each one works independently, and you
 - **Detailed log**: a text file with details of every job and any errors.
 - **Remove all**: deletes every printer the app created and stops the service. Saved PDF files are not deleted.
 
+The service runs as a scheduled task when your user signs in, with a one-minute repeat trigger to restore it if stopped. **Service running** means the watcher has reached readiness after acquiring both legacy locks; the presence of a task or process alone does not establish readiness. The printer card **Ready** badge describes printer connectivity separately.
+
 ## File locations
 All data is stored in the `C:\DualPrint` folder. It is shared by all versions of the app on the computer and is not affected by updates:
 
@@ -62,7 +72,7 @@ All data is stored in the `C:\DualPrint` folder. It is shared by all versions of
 | `settings.json` | Language |
 | `history.jsonl` | Print history |
 | `log.txt` | Detailed log |
-| `MultiPrint.exe` | The copy of the service that runs in the background |
+| `DualPrint.exe` | The copy of the service that runs in the background |
 
 ## Uninstalling
 In **Settings**, choose **Remove all**, then delete the `C:\DualPrint` folder and the executable.

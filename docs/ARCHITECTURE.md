@@ -1,14 +1,14 @@
 # Technical Architecture
 
 ## The idea
-Windows does not let a single printer send to two printers. So MultiPrint creates a virtual printer that **prints to a PDF file**, and a small service watches that file and distributes it.
+Windows does not let a single printer send to two printers. So DualPrint creates a virtual printer that **prints to a PDF file**, and a small service watches that file and distributes it.
 
 ```
  Any app ──print──▶ "Invoice Printing" (virtual printer)
                           │  Driver: Microsoft Print To PDF
                           │  Port:   C:\DualPrint\queues\q_xxx\incoming.pdf
                           ▼
-                 MultiPrint service (MultiPrint.exe --watch)
+                 DualPrint service (DualPrint.exe --watch)
                           │  detects incoming.pdf and waits until it is fully written
                           │  moves it to jobs\job_….pdf
                           ├──▶ Printer 1  (SumatraPDF -print-to)
@@ -22,12 +22,12 @@ Windows does not let a single printer send to two printers. So MultiPrint create
 
 ### `src/Launcher.cs`: the executable
 - A small C# program that relies on .NET Framework 4, which is available in Windows 10 and 11.
-- Embeds `MultiPrint.ps1` as a resource.
+- Embeds `DualPrint.ps1` as a resource.
 - Requests administrator rights, except in `--watch` mode.
 - Runs the app **in the same process** through a PowerShell Runspace on an STA thread, so it appears in the taskbar and Task Manager with its own name and icon, without a PowerShell window.
 - Accesses `System.Management.Automation` through Reflection, so it needs no build-time references.
 
-### `src/MultiPrint.ps1`: the app
+### `src/DualPrint.ps1`: the app
 | Part | Responsibility |
 |---|---|
 | General utilities | `Get-Config`, `Save-Config`, `Get-Targets` and `Write-Log` |
@@ -36,11 +36,17 @@ Windows does not let a single printer send to two printers. So MultiPrint create
 | UI (WPF) | A XAML file for the main window, and small XAML fragments built dynamically for the cards and history rows |
 | Languages | `__STRINGS_JSON__` is replaced at build time with the contents of `strings.json`, and the `T 'key'` function returns the matching text |
 
-### Print service (the `MultiPrint Watcher` scheduled task)
-- Runs `C:\DualPrint\MultiPrint.exe --watch` with normal user rights.
-- Triggers: at logon, and every five minutes to restore the service if it has stopped.
+### Print service (the `DualPrint Service` scheduled task)
+- Runs `C:\DualPrint\DualPrint.exe --watch` with normal user rights.
+- Triggers: at logon, and every minute to restore the service if it has stopped.
 - Settings: no time limit, keeps running on battery power, and retries after one minute on failure.
-- The `MultipleInstances IgnoreNew` option together with the `Local\MultiPrintWatcher` lock ensures only one instance runs.
+- The `MultipleInstances IgnoreNew` option together with the `Local\DualPrintService` lock ensures only one instance runs.
+
+## Upgrade coordination
+
+The watcher owns `Local\DualPrintService` plus the compatibility locks `Local\MultiPrintWatcher` and `Local\DualPrintWatcher`. It reads no jobs until both compatibility locks are owned. Only then does it create and own `Local\DualPrintService.Ready`. Status checks require the primary and Ready mutex handles: primary-mutex existence alone can mean the watcher is still waiting for a legacy service. These local-session locks prevent old and new watchers from processing the same queue in that session.
+
+Upgrade cleanup disables, stops and unregisters `MultiPrint Watcher` and the original `DualPrint Watcher`, and stops only matching legacy watcher processes. Once readiness is confirmed, the legacy installed exe is renamed to a preserved rollback copy. Data remains in `C:\DualPrint`; only blank legacy PDF destinations are pinned to their old default. See the [approved design](architecture/F005-rename-to-dualprint.md) and [validation limits](qa/T012-upgrade-validation.md).
 
 ## Structure of `printers.json`
 ```json
@@ -70,7 +76,7 @@ The samples above use English values; printer names, document names and file-nam
 
 ## Adding a new language
 1. Copy the `"en"` block in `src/strings.json` under the language code (for example `"tr"`) and translate the values.
-2. Add the language in `MultiPrint.ps1` in `Show-LanguagePicker`, `$CultureMap` and `$LangNames`.
+2. Add the language in `DualPrint.ps1` in `Show-LanguagePicker`, `$CultureMap` and `$LangNames`.
 3. Rebuild the app.
 
 ## Known limitations

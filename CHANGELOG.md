@@ -1,7 +1,18 @@
 # Changelog
 
 ## Unreleased
+- Prepared DualPrint 3.0.0 documentation; publication is pending.
 - Documentation: README, CHANGELOG and all user docs in `docs/` are now in English.
+
+## 3.0.0 (prepared; not yet published)
+### Changed
+- MultiPrint is now DualPrint: executable, UI, service and canonical download use the new name.
+- Existing printers, settings, language, history and saved PDF folders are retained. New PDF printers default to `Documents\DualPrint PDFs`; blank legacy PDF destinations retain `Documents\MultiPrint PDFs`.
+- Legacy tasks are removed; the new service acquires both legacy locks before processing jobs and signals readiness separately from primary-mutex existence.
+- The old installed exe is preserved as `MultiPrint.exe.old` (or a unique suffixed copy) after readiness; re-pin old shortcuts to `DualPrint.exe`.
+- Releases include `DualPrint.zip`, a byte-identical `MultiPrint.zip` compatibility alias on every release, and checksums for both filenames.
+### Documentation
+- Added upgrade, duplicate-print troubleshooting, manual rollback and accurate tag-triggered release instructions. See [release notes](docs/release-notes/v3.0.0.md).
 
 ## 2.2.5
 - The print service restarts itself automatically within 3 seconds if it stops for any reason, and Windows checks on it every minute.

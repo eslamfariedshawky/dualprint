@@ -1,16 +1,18 @@
-# MultiPrint
+# DualPrint
 
 **Print to all your printers at once, and save a PDF copy automatically.**
 
-MultiPrint adds a single virtual printer to Windows. When you print to it from any application, such as Word, Excel, your browser or an accounting system, the document is sent to all the selected printers at the same moment, and a PDF copy can be saved to a fixed folder without any save dialog.
+DualPrint adds a single virtual printer to Windows. When you print to it from any application, such as Word, Excel, your browser or an accounting system, the document is sent to all the selected printers at the same moment, and a PDF copy can be saved to a fixed folder without any save dialog.
 
 > 🌐 **Official website:** the link is in the *About* box at the top of this page. The site is available in Arabic, English, Russian, German, Spanish and French.
 
-![MultiPrint](website/assets/screenshot-en.png)
+![DualPrint](website/assets/screenshot-en.png)
+
+DualPrint 3.0.0 is the new name for MultiPrint. It works with two or more printers. Existing printers, settings, language, history and PDF folders are kept on upgrade. See the [3.0.0 release notes](docs/release-notes/v3.0.0.md) before upgrading.
 
 ## Download
 
-Download the latest version from the [Releases](../../releases/latest) page, extract `MultiPrint.zip`, run `MultiPrint.exe`, and approve the administrator prompt.
+Download the latest version from the [Releases](../../releases/latest) page, extract `DualPrint.zip`, run `DualPrint.exe`, and approve the administrator prompt.
 
 > On first run, Windows may show the message "Windows protected your PC" because the file is not digitally signed yet. If so, choose **More info**, then **Run anyway**.
 
@@ -48,13 +50,13 @@ Full details are in the [User Guide](docs/USER_GUIDE.md).
 ## Project structure
 
 ```
-multiprint/
+dualprint/
 ├─ src/
-│  ├─ MultiPrint.ps1      ← the app (UI and print service)
+│  ├─ DualPrint.ps1      ← the app (UI and print service)
 │  ├─ strings.json        ← texts for the five languages
 │  └─ Launcher.cs         ← the executable that runs the app
 ├─ assets/icon.ico        ← app icon
-├─ build.ps1              ← builds build/MultiPrint.exe
+├─ build.ps1              ← builds build/DualPrint.exe
 ├─ website/               ← official website (GitHub Pages)
 ├─ tools/                 ← website texts and the site generator
 ├─ docs/                  ← documentation
@@ -66,10 +68,20 @@ multiprint/
 On Windows, with no extra tools to install (the build uses the `csc.exe` compiler that ships with the built-in .NET Framework):
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\build.ps1 -Version 2.2.5
+powershell -ExecutionPolicy Bypass -File .\build.ps1 -Version 3.0.0
 ```
 
-This creates `build\MultiPrint.exe`. See [docs/BUILDING.md](docs/BUILDING.md) for details.
+This creates `build\DualPrint.exe`. See [docs/BUILDING.md](docs/BUILDING.md) for details.
+
+## Tests and configuration
+
+From the repository root on Windows, run the existing Pester suite:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-Pester -EnableExit"
+```
+
+No application environment variables or `.env` configuration are required. See [Building](docs/BUILDING.md) for packaging verification and test limits.
 
 ## License
 
