@@ -35,9 +35,10 @@ jobs:
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
 
       - name: Fill in site and repository links
+        env:
+          SITE: ${{ steps.pages.outputs.base_url }}
+          REPO: ${{ github.server_url }}/${{ github.repository }}
         run: |
-          SITE="${{ steps.pages.outputs.base_url }}"
-          REPO="${{ github.server_url }}/${{ github.repository }}"
           find website -type f \( -name '*.html' -o -name '*.xml' -o -name '*.txt' \) \
             -exec sed -i -e "s#__SITE_URL__#${SITE}#g" -e "s#__REPO_URL__#${REPO}#g" {} +
           grep -rl "__SITE_URL__\|__REPO_URL__" website && exit 1 || echo "Links OK: $SITE"
