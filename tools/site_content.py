@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# نصوص الموقع لكل لغة. عدّل هنا ثم شغّل: python tools/build_site.py
+# Website text for each language. Edit here, then run: python tools/build_site.py
 VERSION = "2.2.5"
 
 LANGS = ["en", "ar", "ru", "de", "es", "fr"]
@@ -241,14 +241,14 @@ C["fr"] = dict(
     langlabel="Langue",
 )
 
-# عناوين قصيرة بأسلوب الشركات
+# Short headlines in a corporate style
 C["en"].update({'h1': 'Print to every printer. At once.', 'sub': 'One virtual printer that sends each document to the printers you choose — and saves a PDF copy to your folder automatically.', 'learn': 'See how it works', 'tagline': 'Simple. Free. No complicated setup.', 'specs': [('2+', 'printers per document'), ('PDF', 'saved automatically'), ('0', 'complicated settings'), ('Free', 'and open source')], 'how_title': 'Three steps. That’s it.', 'feat_title': 'Everything you need. Nothing you don’t.', 'use_title': 'Built for business.', 'cta_title': 'Print once. Everywhere.'})
 C["ru"].update({'h1': 'Печать на все принтеры. Одновременно.', 'sub': 'Один виртуальный принтер отправляет каждый документ на выбранные принтеры и автоматически сохраняет копию PDF в вашу папку.', 'learn': 'Как это работает', 'tagline': 'Просто. Бесплатно. Без сложных настроек.', 'specs': [('2+', 'принтера на документ'), ('PDF', 'сохраняется автоматически'), ('0', 'сложных настроек'), ('Бесплатно', 'и с открытым кодом')], 'how_title': 'Всего три шага.', 'use_title': 'Создано для бизнеса.', 'cta_title': 'Печатайте один раз. Везде.'})
 C["de"].update({'h1': 'Auf allen Druckern drucken. Gleichzeitig.', 'sub': 'Ein virtueller Drucker sendet jedes Dokument an die gewählten Drucker – und speichert automatisch eine PDF-Kopie in Ihrem Ordner.', 'learn': 'So funktioniert es', 'tagline': 'Einfach. Kostenlos. Ohne komplizierte Einrichtung.', 'specs': [('2+', 'Drucker pro Dokument'), ('PDF', 'automatisch gespeichert'), ('0', 'komplizierte Einstellungen'), ('Kostenlos', 'und Open Source')], 'how_title': 'Drei Schritte. Fertig.', 'use_title': 'Für Unternehmen entwickelt.', 'cta_title': 'Einmal drucken. Überall.'})
 C["es"].update({'h1': 'Imprime en todas tus impresoras. A la vez.', 'sub': 'Una impresora virtual envía cada documento a las impresoras que elijas y guarda automáticamente una copia PDF en tu carpeta.', 'learn': 'Cómo funciona', 'tagline': 'Sencillo. Gratis. Sin configuraciones complicadas.', 'specs': [('2+', 'impresoras por documento'), ('PDF', 'guardado automático'), ('0', 'ajustes complicados'), ('Gratis', 'y de código abierto')], 'how_title': 'Tres pasos. Nada más.', 'use_title': 'Diseñado para empresas.', 'cta_title': 'Imprime una vez. En todas partes.'})
 C["fr"].update({'h1': 'Imprimez sur toutes vos imprimantes. En même temps.', 'sub': 'Une imprimante virtuelle envoie chaque document aux imprimantes choisies et enregistre automatiquement une copie PDF dans votre dossier.', 'learn': 'Voir le fonctionnement', 'tagline': 'Simple. Gratuit. Sans réglages compliqués.', 'specs': [('2+', 'imprimantes par document'), ('PDF', 'enregistré automatiquement'), ('0', 'réglage compliqué'), ('Gratuit', 'et open source')], 'how_title': 'Trois étapes. C’est tout.', 'use_title': 'Conçu pour les entreprises.', 'cta_title': 'Imprimez une fois. Partout.'})
 
-# ميزة سهولة الإعداد
+# Easy-setup feature
 C["en"]["feats"] = C["en"]["feats"] + [('Easy to set up', 'No drivers to install, no configuration — your first multi printer is ready in under a minute.')]
 C["ar"]["feats"] = C["ar"]["feats"] + [('سهل الإعداد', 'دون تثبيت تعريفات أو إعدادات معقدة؛ تصبح طابعتك المتعددة الأولى جاهزة في أقل من دقيقة.')]
 C["ru"]["feats"] = C["ru"]["feats"] + [('Простая настройка', 'Без установки драйверов и сложных настроек — первый мультипринтер готов меньше чем за минуту.')]
@@ -257,7 +257,7 @@ C["es"]["feats"] = C["es"]["feats"] + [('Fácil de configurar', 'Sin instalar co
 C["fr"]["feats"] = C["fr"]["feats"] + [('Facile à configurer', 'Aucun pilote à installer, aucun réglage compliqué : votre première imprimante multiple est prête en moins d’une minute.')]
 
 
-# ======================= مراجعة نهائية: عناوين/أوصاف بطول مناسب لجوجل، توحيد الأسلوب
+# ======================= Final pass: titles/descriptions at a Google-friendly length, consistent style
 C["en"].update(
     title="MultiPrint – Print to Multiple Printers at Once & Save PDF",
     desc="Free Windows app that connects two or more printers to one virtual printer. Print once to all of them and save a PDF copy automatically. No complicated setup.",
@@ -307,11 +307,11 @@ C["fr"].update(
     feat_title="L’essentiel. Rien de plus.",
 )
 
-# اسم الترخيص في التذييل
+# License name in the footer
 for _l, _v in {"en": "MIT License", "ar": "ترخيص MIT", "ru": "Лицензия MIT", "de": "MIT-Lizenz", "es": "Licencia MIT", "fr": "Licence MIT"}.items():
     C[_l]["license"] = _v
 
-# ======================= SEO: سطر كلمات البحث فوق العنوان + صفحة الدليل لكل لغة
+# ======================= SEO: keyword line above the headline + guide page for each language
 _EYEBROW = {
     "en": "Free Windows app to print to multiple printers at the same time",
     "ar": "برنامج مجاني لنظام Windows للطباعة على أكثر من طابعة في الوقت نفسه",
@@ -474,7 +474,7 @@ G["fr"] = dict(
          ("Est-ce gratuit ?", "Oui. MultiPrint est gratuit et open source (licence MIT).")],
     back="Retour à MultiPrint", cta="Télécharger pour Windows",
 )
-# أوصاف الدليل بطول مناسب لنتائج جوجل (≤ 160 حرف)
+# Guide descriptions at a length suited to Google results (≤ 160 characters)
 G["en"]["desc"] = "Send one print job to two or more printers at once in Windows 10 and 11, and save a PDF copy automatically. Why printer pooling won't do it, and the free fix."
 G["ar"]["desc"] = "اطبع المستند على طابعتين أو أكثر في الوقت نفسه في Windows 10 و11 مع حفظ نسخة PDF تلقائيًا، ولماذا لا تؤدي ميزة Printer Pooling هذه المهمة."
 G["ru"]["desc"] = "Как отправить одно задание сразу на два и более принтера в Windows 10 и 11 и сохранить PDF. Почему пул принтеров не подходит и бесплатное решение."

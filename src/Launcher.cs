@@ -24,7 +24,7 @@ static class Program
 
     const BindingFlags PubAll = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static;
 
-    // يختار الدالة بالظبط (غير generic وبنفس أنواع الباراميترز) عشان ما يحصلش Ambiguous match
+    // Picks the exact method (non-generic, with the same parameter types) to avoid an Ambiguous match
     static MethodInfo M(Type t, string name, params Type[] p)
     {
         foreach (MethodInfo m in t.GetMethods(PubAll))
@@ -101,7 +101,7 @@ static class Program
 
             if (watch)
             {
-                // الخدمة: لو الكود وقع أو خرج لأي سبب، يرجع يشتغل بعد 3 ثواني (إلا لو فيه نسخة تانية شغالة)
+                // Service: if the code crashes or exits for any reason, it restarts after 3 seconds (unless another instance is running)
                 while (true)
                 {
                     try { M(psT, "Invoke").Invoke(ps, null); } catch { }
