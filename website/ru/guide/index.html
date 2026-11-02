@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ru" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-MsjrPZIOX58IM+4+mh/zZpdfSb2EMA1II63IcwH4JKs='; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Как печатать на два принтера одновременно в Windows 10/11</title>
+<meta name="description" content="Как отправить одно задание сразу на два и более принтера в Windows 10 и 11 и сохранить PDF. Почему пул принтеров не подходит и бесплатное решение.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="__SITE_URL__/ru/guide/">
+<link rel="alternate" hreflang="en" href="__SITE_URL__/guide/">
+<link rel="alternate" hreflang="ar" href="__SITE_URL__/ar/guide/">
+<link rel="alternate" hreflang="ru" href="__SITE_URL__/ru/guide/">
+<link rel="alternate" hreflang="de" href="__SITE_URL__/de/guide/">
+<link rel="alternate" hreflang="es" href="__SITE_URL__/es/guide/">
+<link rel="alternate" hreflang="fr" href="__SITE_URL__/fr/guide/">
+<link rel="alternate" hreflang="x-default" href="__SITE_URL__/guide/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="MultiPrint">
+<meta property="og:title" content="Как печатать на два принтера одновременно в Windows 10/11">
+<meta property="og:description" content="Как отправить одно задание сразу на два и более принтера в Windows 10 и 11 и сохранить PDF. Почему пул принтеров не подходит и бесплатное решение.">
+<meta property="og:url" content="__SITE_URL__/ru/guide/">
+<meta property="og:image" content="__SITE_URL__/assets/screenshot-en.png">
+<meta property="og:locale" content="ru_RU">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Как печатать на два принтера одновременно в Windows", "description": "Как отправить одно задание сразу на два и более принтера в Windows 10 и 11 и сохранить PDF. Почему пул принтеров не подходит и бесплатное решение.", "inLanguage": "ru", "url": "__SITE_URL__/ru/guide/", "image": "__SITE_URL__/assets/screenshot-en.png", "author": {"@type": "Organization", "name": "MultiPrint"}, "publisher": {"@type": "Organization", "name": "MultiPrint"}, "about": {"@type": "SoftwareApplication", "name": "MultiPrint", "operatingSystem": "Windows 10, Windows 11"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "MultiPrint", "item": "__SITE_URL__/ru/"}, {"@type": "ListItem", "position": 2, "name": "Инструкция", "item": "__SITE_URL__/ru/guide/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Можно ли печатать на два принтера в Windows без дополнительных программ?", "acceptedAnswer": {"@type": "Answer", "text": "Нет. Windows отправляет задание на один принтер, а пул принтеров лишь распределяет задания, но не печатает на всех."}}, {"@type": "Question", "name": "Работает ли с сетевыми и USB-принтерами?", "acceptedAnswer": {"@type": "Answer", "text": "Да. Подходит любой принтер, установленный в Windows, включая сетевые, USB и чековые принтеры."}}, {"@type": "Question", "name": "Можно ли задать формат бумаги?", "acceptedAnswer": {"@type": "Answer", "text": "У каждого мультипринтера есть настройка формата (A4, A3, A5, Letter, Legal или автоматически). Остальные параметры берутся из настроек принтера."}}, {"@type": "Question", "name": "Это бесплатно?", "acceptedAnswer": {"@type": "Answer", "text": "Да. MultiPrint бесплатный, с открытым исходным кодом (лицензия MIT)."}}]}</script>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap navbar">
+    <a class="brand" href="../../ru/" aria-label="MultiPrint"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg><span>MultiPrint</span></a>
+    <nav class="links"><a href="../../ru/">Назад к MultiPrint</a></nav>
+    <details class="lang"><summary aria-label="Язык"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span>Русский</span></summary><div class="menu"><a href="../../guide/" hreflang="en" lang="en">English</a><a href="../../ar/guide/" hreflang="ar" lang="ar">العربية</a><a href="../../ru/guide/" hreflang="ru" lang="ru" aria-current="page">Русский</a><a href="../../de/guide/" hreflang="de" lang="de">Deutsch</a><a href="../../es/guide/" hreflang="es" lang="es">Español</a><a href="../../fr/guide/" hreflang="fr" lang="fr">Français</a></div></details>
+    <a class="navbtn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">Скачать для Windows</a>
+  </div>
+</header>
+<main>
+<article class="article">
+  <div class="wrap narrow">
+    <nav class="crumbs" aria-label="breadcrumb"><a href="../../ru/">MultiPrint</a> <span class="chev" aria-hidden="true">›</span> <span>Инструкция</span></nav>
+    <h1>Как печатать на два принтера одновременно в Windows</h1>
+    <p class="lead">Windows отправляет каждое задание только на один принтер. Ниже показано, как за минуту настроить печать одного документа сразу на два и более принтера с автоматическим сохранением PDF.</p>
+    <p><a class="btn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">Скачать для Windows</a></p>
+    <h2>Почему Windows не умеет этого по умолчанию</h2>
+    <p>При нажатии «Печать» Windows передаёт задание ровно одному принтеру. Встроенной настройки для дублирования нет.</p><p>Часто советуют «пул принтеров» в свойствах принтера, но он отправляет задание на первый свободный принтер, а не на все сразу.</p><p>Можно печатать документ дважды, но это медленно и легко забыть — особенно со счетами, где нужны бумажная копия и PDF в архиве.</p>
+    <h2>Печать на несколько принтеров с MultiPrint</h2>
+    <ol class="gsteps"><li><h3>Скачайте MultiPrint</h3><p>Скачайте бесплатную программу для Windows 10 или 11, распакуйте и запустите MultiPrint.exe. Один раз подтвердите запрос администратора.</p></li><li><h3>Добавьте мультипринтер</h3><p>Нажмите «Добавить принтер» и задайте имя, например «Счета».</p></li><li><h3>Выберите принтеры</h3><p>Отметьте два или более принтера. Добавьте «Microsoft Print to PDF», если нужна копия PDF.</p></li><li><h3>Укажите папку для PDF</h3><p>Если выбран PDF, укажите папку и при желании префикс имени файла — файлы будут сохраняться туда автоматически.</p></li><li><h3>Печатайте из любой программы</h3><p>В Word, Excel, браузере или учётной программе выберите новый принтер по имени.</p></li><li><h3>Проверьте историю</h3><p>Каждый документ появляется в истории печати с результатом по каждому принтеру.</p></li></ol>
+    <figure class="gshot"><img src="../../assets/screenshot-en.png" width="1620" height="1155" alt="Программа MultiPrint: мультипринтер, связанный с принтером Epson и папкой PDF" loading="lazy"></figure>
+    <h2>Печать и сохранение в PDF одновременно</h2>
+    <p>Выберите обычный принтер и «Microsoft Print to PDF». Вы получите бумажную копию и PDF с именем вроде Счёт_2026-11-02_15-45-00.pdf в выбранной папке без окна «Сохранить как».</p>
+    <h2>Частые вопросы</h2>
+    <div class="faq"><details><summary><span>Можно ли печатать на два принтера в Windows без дополнительных программ?</span><span class="plus" aria-hidden="true"></span></summary><p>Нет. Windows отправляет задание на один принтер, а пул принтеров лишь распределяет задания, но не печатает на всех.</p></details><details><summary><span>Работает ли с сетевыми и USB-принтерами?</span><span class="plus" aria-hidden="true"></span></summary><p>Да. Подходит любой принтер, установленный в Windows, включая сетевые, USB и чековые принтеры.</p></details><details><summary><span>Можно ли задать формат бумаги?</span><span class="plus" aria-hidden="true"></span></summary><p>У каждого мультипринтера есть настройка формата (A4, A3, A5, Letter, Legal или автоматически). Остальные параметры берутся из настроек принтера.</p></details><details><summary><span>Это бесплатно?</span><span class="plus" aria-hidden="true"></span></summary><p>Да. MultiPrint бесплатный, с открытым исходным кодом (лицензия MIT).</p></details></div>
+    <div class="gcta">
+      <a class="btn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">Скачать для Windows</a>
+      <a class="link" href="../../ru/">Назад к MultiPrint <span class="chev" aria-hidden="true">›</span></a>
+    </div>
+  </div>
+</article>
+</main>
+<footer class="foot">
+  <div class="wrap">
+    <p class="langs"><a href="../../guide/" hreflang="en" lang="en">English</a><a href="../../ar/guide/" hreflang="ar" lang="ar">العربية</a><a href="../../ru/guide/" hreflang="ru" lang="ru" aria-current="page">Русский</a><a href="../../de/guide/" hreflang="de" lang="de">Deutsch</a><a href="../../es/guide/" hreflang="es" lang="es">Español</a><a href="../../fr/guide/" hreflang="fr" lang="fr">Français</a></p>
+    <p><bdi dir="ltr">MultiPrint — бесплатная программа с открытым исходным кодом.</bdi> · <bdi><a href="__REPO_URL__">GitHub</a></bdi></p>
+  </div>
+</footer>
+<script>
+(function () {
+  var d = document.documentElement; d.classList.add('js');
+  var nav = document.querySelector('.nav');
+  function edge() { nav.classList.toggle('scrolled', window.scrollY > 4); }
+  edge(); window.addEventListener('scroll', edge, { passive: true });
+  var items = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { items.forEach(function (el) { el.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  items.forEach(function (el, i) {
+    var sib = el.parentElement ? Array.prototype.indexOf.call(el.parentElement.children, el) : 0;
+    el.style.transitionDelay = Math.min(sib, 4) * 60 + 'ms';
+    io.observe(el);
+  });
+  document.querySelectorAll('.lang .menu a, .foot .langs a').forEach(function (a) {
+    a.addEventListener('click', function () { try { localStorage.setItem('mp-lang', a.getAttribute('hreflang')); } catch (e) {} });
+  });
+  document.querySelectorAll('.lang').forEach(function (m) {
+    document.addEventListener('pointerdown', function (e) { if (m.open && !m.contains(e.target)) m.open = false; });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+build/
+*.exe
+*.zip
+!assets/*
+.vs/
+Thumbs.db

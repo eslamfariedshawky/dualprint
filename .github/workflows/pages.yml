@@ -1,0 +1,50 @@
+# ينشر فولدر website/ على GitHub Pages.
+# فعّلها مرة واحدة: Settings ← Pages ← Source: GitHub Actions
+# رابط الموقع ورابط الـ repo بيتكتبوا تلقائيًا هنا — مش محتاج تعدّل أي ملف.
+name: Website
+
+on:
+  push:
+    branches: [main]
+    paths: ['website/**', '.github/workflows/pages.yml']
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Fill in site and repository links
+        run: |
+          SITE="${{ steps.pages.outputs.base_url }}"
+          REPO="${{ github.server_url }}/${{ github.repository }}"
+          find website -type f \( -name '*.html' -o -name '*.xml' -o -name '*.txt' \) \
+            -exec sed -i -e "s#__SITE_URL__#${SITE}#g" -e "s#__REPO_URL__#${REPO}#g" {} +
+          grep -rl "__SITE_URL__\|__REPO_URL__" website && exit 1 || echo "Links OK: $SITE"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: website
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

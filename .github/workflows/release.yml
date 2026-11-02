@@ -1,0 +1,58 @@
+# يبني MultiPrint.exe على Windows.
+# - أي push أو pull request: يبني البرنامج ويرفعه كـ artifact للتجربة (بصلاحية قراءة فقط).
+# - عند إنشاء tag يبدأ بـ v (مثل v2.1.2): ينشئ Release ويضيف MultiPrint.zip.
+name: Build & Release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+    paths-ignore: ['website/**', 'docs/**', '*.md']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Build
+        shell: pwsh
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          $ver = if ($env:REF_TYPE -eq 'tag' -and $env:REF_NAME -match '^v?\d+(\.\d+){0,3}$') { $env:REF_NAME } else { '0.0.0' }
+          ./build.ps1 -Version $ver
+          (Get-FileHash build/MultiPrint.zip -Algorithm SHA256).Hash.ToLower() + '  MultiPrint.zip' | Out-File build/SHA256SUMS.txt -Encoding ascii
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: MultiPrint
+          path: |
+            build/MultiPrint.zip
+            build/SHA256SUMS.txt
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: MultiPrint
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            MultiPrint.zip
+            SHA256SUMS.txt
+          generate_release_notes: true

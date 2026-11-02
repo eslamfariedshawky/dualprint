@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-MsjrPZIOX58IM+4+mh/zZpdfSb2EMA1II63IcwH4JKs='; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Imprimer sur deux imprimantes à la fois sous Windows</title>
+<meta name="description" content="Envoyez une impression à plusieurs imprimantes en même temps sous Windows 10 et 11 et enregistrez un PDF. Pourquoi le pool d’imprimantes ne suffit pas.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="__SITE_URL__/fr/guide/">
+<link rel="alternate" hreflang="en" href="__SITE_URL__/guide/">
+<link rel="alternate" hreflang="ar" href="__SITE_URL__/ar/guide/">
+<link rel="alternate" hreflang="ru" href="__SITE_URL__/ru/guide/">
+<link rel="alternate" hreflang="de" href="__SITE_URL__/de/guide/">
+<link rel="alternate" hreflang="es" href="__SITE_URL__/es/guide/">
+<link rel="alternate" hreflang="fr" href="__SITE_URL__/fr/guide/">
+<link rel="alternate" hreflang="x-default" href="__SITE_URL__/guide/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="MultiPrint">
+<meta property="og:title" content="Imprimer sur deux imprimantes à la fois sous Windows">
+<meta property="og:description" content="Envoyez une impression à plusieurs imprimantes en même temps sous Windows 10 et 11 et enregistrez un PDF. Pourquoi le pool d’imprimantes ne suffit pas.">
+<meta property="og:url" content="__SITE_URL__/fr/guide/">
+<meta property="og:image" content="__SITE_URL__/assets/screenshot-fr.png">
+<meta property="og:locale" content="fr_FR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Comment imprimer sur deux imprimantes en même temps sous Windows", "description": "Envoyez une impression à plusieurs imprimantes en même temps sous Windows 10 et 11 et enregistrez un PDF. Pourquoi le pool d’imprimantes ne suffit pas.", "inLanguage": "fr", "url": "__SITE_URL__/fr/guide/", "image": "__SITE_URL__/assets/screenshot-fr.png", "author": {"@type": "Organization", "name": "MultiPrint"}, "publisher": {"@type": "Organization", "name": "MultiPrint"}, "about": {"@type": "SoftwareApplication", "name": "MultiPrint", "operatingSystem": "Windows 10, Windows 11"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "MultiPrint", "item": "__SITE_URL__/fr/"}, {"@type": "ListItem", "position": 2, "name": "Guide", "item": "__SITE_URL__/fr/guide/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Windows peut-il imprimer sur deux imprimantes sans logiciel supplémentaire ?", "acceptedAnswer": {"@type": "Answer", "text": "Non. Windows envoie un travail à une imprimante ; le pool d’imprimantes répartit seulement les travaux sans imprimer sur toutes."}}, {"@type": "Question", "name": "Est-ce compatible avec les imprimantes réseau et USB ?", "acceptedAnswer": {"@type": "Answer", "text": "Oui. Toute imprimante installée dans Windows convient, y compris réseau, USB et imprimantes de tickets."}}, {"@type": "Question", "name": "Puis-je choisir le format du papier ?", "acceptedAnswer": {"@type": "Answer", "text": "Chaque imprimante multiple a un réglage de format (A4, A3, A5, Letter, Legal ou automatique). Les autres réglages sont ceux de chaque imprimante."}}, {"@type": "Question", "name": "Est-ce gratuit ?", "acceptedAnswer": {"@type": "Answer", "text": "Oui. MultiPrint est gratuit et open source (licence MIT)."}}]}</script>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap navbar">
+    <a class="brand" href="../../fr/" aria-label="MultiPrint"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg><span>MultiPrint</span></a>
+    <nav class="links"><a href="../../fr/">Retour à MultiPrint</a></nav>
+    <details class="lang"><summary aria-label="Langue"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span>Français</span></summary><div class="menu"><a href="../../guide/" hreflang="en" lang="en">English</a><a href="../../ar/guide/" hreflang="ar" lang="ar">العربية</a><a href="../../ru/guide/" hreflang="ru" lang="ru">Русский</a><a href="../../de/guide/" hreflang="de" lang="de">Deutsch</a><a href="../../es/guide/" hreflang="es" lang="es">Español</a><a href="../../fr/guide/" hreflang="fr" lang="fr" aria-current="page">Français</a></div></details>
+    <a class="navbtn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">Télécharger pour Windows</a>
+  </div>
+</header>
+<main>
+<article class="article">
+  <div class="wrap narrow">
+    <nav class="crumbs" aria-label="breadcrumb"><a href="../../fr/">MultiPrint</a> <span class="chev" aria-hidden="true">›</span> <span>Guide</span></nav>
+    <h1>Comment imprimer sur deux imprimantes en même temps sous Windows</h1>
+    <p class="lead">Windows envoie chaque impression à une seule imprimante. Voici comment imprimer le même document sur deux imprimantes ou plus à la fois, avec une copie PDF automatique, en une minute environ.</p>
+    <p><a class="btn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">Télécharger pour Windows</a></p>
+    <h2>Pourquoi Windows ne le fait pas par défaut</h2>
+    <p>Quand vous cliquez sur Imprimer, Windows confie le travail à une seule imprimante. Aucun réglage intégré ne permet de le dupliquer.</p><p>Le « pool d’imprimantes » est souvent conseillé, mais il envoie chaque travail à la première imprimante libre, pas à toutes.</p><p>Imprimer deux fois fonctionne, mais c’est lent et facile à oublier, surtout pour les factures qui exigent un papier et un PDF archivé.</p>
+    <h2>Imprimer sur plusieurs imprimantes avec MultiPrint</h2>
+    <ol class="gsteps"><li><h3>Téléchargez MultiPrint</h3><p>Téléchargez l’application gratuite pour Windows 10 ou 11, décompressez-la et lancez MultiPrint.exe. Acceptez une fois la demande administrateur.</p></li><li><h3>Ajoutez une imprimante multiple</h3><p>Cliquez sur Ajouter une imprimante et donnez-lui un nom, par exemple « Factures ».</p></li><li><h3>Choisissez les imprimantes</h3><p>Cochez deux imprimantes ou plus. Ajoutez « Microsoft Print to PDF » pour obtenir aussi une copie PDF.</p></li><li><h3>Choisissez le dossier PDF</h3><p>Si le PDF est sélectionné, indiquez le dossier et un préfixe de nom facultatif. Les fichiers y sont enregistrés automatiquement.</p></li><li><h3>Imprimez depuis n’importe quel logiciel</h3><p>Dans Word, Excel, le navigateur ou votre logiciel de compta, choisissez la nouvelle imprimante.</p></li><li><h3>Consultez l’historique</h3><p>Chaque document apparaît dans l’historique avec chaque destination et son résultat.</p></li></ol>
+    <figure class="gshot"><img src="../../assets/screenshot-fr.png" width="1620" height="1155" alt="Application MultiPrint avec une imprimante multiple reliée à une Epson et à un dossier PDF" loading="lazy"></figure>
+    <h2>Imprimer et enregistrer en PDF en même temps</h2>
+    <p>Sélectionnez une imprimante réelle et « Microsoft Print to PDF ». Vous obtenez le papier et un PDF nommé comme Facture_2026-11-02_15-45-00.pdf dans le dossier choisi, sans fenêtre « Enregistrer sous ».</p>
+    <h2>Questions fréquentes</h2>
+    <div class="faq"><details><summary><span>Windows peut-il imprimer sur deux imprimantes sans logiciel supplémentaire ?</span><span class="plus" aria-hidden="true"></span></summary><p>Non. Windows envoie un travail à une imprimante ; le pool d’imprimantes répartit seulement les travaux sans imprimer sur toutes.</p></details><details><summary><span>Est-ce compatible avec les imprimantes réseau et USB ?</span><span class="plus" aria-hidden="true"></span></summary><p>Oui. Toute imprimante installée dans Windows convient, y compris réseau, USB et imprimantes de tickets.</p></details><details><summary><span>Puis-je choisir le format du papier ?</span><span class="plus" aria-hidden="true"></span></summary><p>Chaque imprimante multiple a un réglage de format (A4, A3, A5, Letter, Legal ou automatique). Les autres réglages sont ceux de chaque imprimante.</p></details><details><summary><span>Est-ce gratuit ?</span><span class="plus" aria-hidden="true"></span></summary><p>Oui. MultiPrint est gratuit et open source (licence MIT).</p></details></div>
+    <div class="gcta">
+      <a class="btn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">Télécharger pour Windows</a>
+      <a class="link" href="../../fr/">Retour à MultiPrint <span class="chev" aria-hidden="true">›</span></a>
+    </div>
+  </div>
+</article>
+</main>
+<footer class="foot">
+  <div class="wrap">
+    <p class="langs"><a href="../../guide/" hreflang="en" lang="en">English</a><a href="../../ar/guide/" hreflang="ar" lang="ar">العربية</a><a href="../../ru/guide/" hreflang="ru" lang="ru">Русский</a><a href="../../de/guide/" hreflang="de" lang="de">Deutsch</a><a href="../../es/guide/" hreflang="es" lang="es">Español</a><a href="../../fr/guide/" hreflang="fr" lang="fr" aria-current="page">Français</a></p>
+    <p><bdi dir="ltr">MultiPrint est un logiciel libre et gratuit.</bdi> · <bdi><a href="__REPO_URL__">GitHub</a></bdi></p>
+  </div>
+</footer>
+<script>
+(function () {
+  var d = document.documentElement; d.classList.add('js');
+  var nav = document.querySelector('.nav');
+  function edge() { nav.classList.toggle('scrolled', window.scrollY > 4); }
+  edge(); window.addEventListener('scroll', edge, { passive: true });
+  var items = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { items.forEach(function (el) { el.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  items.forEach(function (el, i) {
+    var sib = el.parentElement ? Array.prototype.indexOf.call(el.parentElement.children, el) : 0;
+    el.style.transitionDelay = Math.min(sib, 4) * 60 + 'ms';
+    io.observe(el);
+  });
+  document.querySelectorAll('.lang .menu a, .foot .langs a').forEach(function (a) {
+    a.addEventListener('click', function () { try { localStorage.setItem('mp-lang', a.getAttribute('hreflang')); } catch (e) {} });
+  });
+  document.querySelectorAll('.lang').forEach(function (m) {
+    document.addEventListener('pointerdown', function (e) { if (m.open && !m.contains(e.target)) m.open = false; });
+  });
+})();
+</script>
+</body>
+</html>

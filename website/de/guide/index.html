@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="de" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-MsjrPZIOX58IM+4+mh/zZpdfSb2EMA1II63IcwH4JKs='; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auf zwei Druckern gleichzeitig drucken in Windows 10/11</title>
+<meta name="description" content="Einen Druckauftrag in Windows 10 und 11 gleichzeitig an mehrere Drucker senden und als PDF speichern. Warum Druckerpools das nicht können – die kostenlose Lösung.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="__SITE_URL__/de/guide/">
+<link rel="alternate" hreflang="en" href="__SITE_URL__/guide/">
+<link rel="alternate" hreflang="ar" href="__SITE_URL__/ar/guide/">
+<link rel="alternate" hreflang="ru" href="__SITE_URL__/ru/guide/">
+<link rel="alternate" hreflang="de" href="__SITE_URL__/de/guide/">
+<link rel="alternate" hreflang="es" href="__SITE_URL__/es/guide/">
+<link rel="alternate" hreflang="fr" href="__SITE_URL__/fr/guide/">
+<link rel="alternate" hreflang="x-default" href="__SITE_URL__/guide/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="MultiPrint">
+<meta property="og:title" content="Auf zwei Druckern gleichzeitig drucken in Windows 10/11">
+<meta property="og:description" content="Einen Druckauftrag in Windows 10 und 11 gleichzeitig an mehrere Drucker senden und als PDF speichern. Warum Druckerpools das nicht können – die kostenlose Lösung.">
+<meta property="og:url" content="__SITE_URL__/de/guide/">
+<meta property="og:image" content="__SITE_URL__/assets/screenshot-de.png">
+<meta property="og:locale" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "So drucken Sie in Windows gleichzeitig auf zwei Druckern", "description": "Einen Druckauftrag in Windows 10 und 11 gleichzeitig an mehrere Drucker senden und als PDF speichern. Warum Druckerpools das nicht können – die kostenlose Lösung.", "inLanguage": "de", "url": "__SITE_URL__/de/guide/", "image": "__SITE_URL__/assets/screenshot-de.png", "author": {"@type": "Organization", "name": "MultiPrint"}, "publisher": {"@type": "Organization", "name": "MultiPrint"}, "about": {"@type": "SoftwareApplication", "name": "MultiPrint", "operatingSystem": "Windows 10, Windows 11"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "MultiPrint", "item": "__SITE_URL__/de/"}, {"@type": "ListItem", "position": 2, "name": "Anleitung", "item": "__SITE_URL__/de/guide/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Kann Windows ohne Zusatzsoftware auf zwei Druckern gleichzeitig drucken?", "acceptedAnswer": {"@type": "Answer", "text": "Nein. Windows sendet einen Auftrag an einen Drucker; ein Druckerpool verteilt Aufträge nur und druckt nicht auf allen."}}, {"@type": "Question", "name": "Funktioniert es mit Netzwerk- und USB-Druckern?", "acceptedAnswer": {"@type": "Answer", "text": "Ja. Jeder in Windows installierte Drucker funktioniert, auch Netzwerk-, USB- und Bondrucker."}}, {"@type": "Question", "name": "Kann ich das Papierformat festlegen?", "acceptedAnswer": {"@type": "Answer", "text": "Jeder Mehrfachdrucker hat eine Formateinstellung (A4, A3, A5, Letter, Legal oder automatisch). Weitere Einstellungen kommen vom jeweiligen Drucker."}}, {"@type": "Question", "name": "Ist es kostenlos?", "acceptedAnswer": {"@type": "Answer", "text": "Ja. MultiPrint ist kostenlos und Open Source unter der MIT-Lizenz."}}]}</script>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap navbar">
+    <a class="brand" href="../../de/" aria-label="MultiPrint"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg><span>MultiPrint</span></a>
+    <nav class="links"><a href="../../de/">Zurück zu MultiPrint</a></nav>
+    <details class="lang"><summary aria-label="Sprache"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span>Deutsch</span></summary><div class="menu"><a href="../../guide/" hreflang="en" lang="en">English</a><a href="../../ar/guide/" hreflang="ar" lang="ar">العربية</a><a href="../../ru/guide/" hreflang="ru" lang="ru">Русский</a><a href="../../de/guide/" hreflang="de" lang="de" aria-current="page">Deutsch</a><a href="../../es/guide/" hreflang="es" lang="es">Español</a><a href="../../fr/guide/" hreflang="fr" lang="fr">Français</a></div></details>
+    <a class="navbtn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">Für Windows herunterladen</a>
+  </div>
+</header>
+<main>
+<article class="article">
+  <div class="wrap narrow">
+    <nav class="crumbs" aria-label="breadcrumb"><a href="../../de/">MultiPrint</a> <span class="chev" aria-hidden="true">›</span> <span>Anleitung</span></nav>
+    <h1>So drucken Sie in Windows gleichzeitig auf zwei Druckern</h1>
+    <p class="lead">Windows sendet jeden Druckauftrag nur an einen Drucker. Diese Anleitung zeigt, wie Sie dasselbe Dokument in etwa einer Minute auf zwei oder mehr Druckern gleichzeitig drucken und automatisch eine PDF-Kopie speichern.</p>
+    <p><a class="btn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">Für Windows herunterladen</a></p>
+    <h2>Warum Windows das standardmäßig nicht kann</h2>
+    <p>Beim Drucken übergibt Windows den Auftrag genau einem Drucker. Eine integrierte Einstellung zum Duplizieren gibt es nicht.</p><p>Oft wird der „Druckerpool“ in den Druckereigenschaften empfohlen. Er sendet jeden Auftrag jedoch an den ersten freien Drucker – nicht an alle.</p><p>Zweimal drucken funktioniert, ist aber langsam und fehleranfällig, besonders bei Rechnungen, die auf Papier und als PDF im Archiv benötigt werden.</p>
+    <h2>Mit MultiPrint auf mehreren Druckern drucken</h2>
+    <ol class="gsteps"><li><h3>MultiPrint herunterladen</h3><p>Laden Sie die kostenlose App für Windows 10 oder 11 herunter, entpacken Sie sie und starten Sie MultiPrint.exe. Bestätigen Sie einmalig die Administratorabfrage.</p></li><li><h3>Mehrfachdrucker anlegen</h3><p>Klicken Sie auf „Drucker hinzufügen“ und vergeben Sie einen Namen, z. B. „Rechnungen“.</p></li><li><h3>Drucker auswählen</h3><p>Wählen Sie zwei oder mehr Drucker. Fügen Sie „Microsoft Print to PDF“ hinzu, wenn Sie auch eine PDF-Kopie möchten.</p></li><li><h3>PDF-Ordner festlegen</h3><p>Bei PDF wählen Sie einen Ordner und optional ein Dateinamen-Präfix. Die Dateien werden dort automatisch gespeichert.</p></li><li><h3>Aus jeder Anwendung drucken</h3><p>Wählen Sie in Word, Excel, im Browser oder in der Buchhaltung den neuen Drucker aus.</p></li><li><h3>Verlauf prüfen</h3><p>Jedes Dokument erscheint im Druckverlauf mit allen Zielen und deren Ergebnis.</p></li></ol>
+    <figure class="gshot"><img src="../../assets/screenshot-de.png" width="1620" height="1155" alt="MultiPrint-App mit einem Mehrfachdrucker, verbunden mit einem Epson-Drucker und einem PDF-Ordner" loading="lazy"></figure>
+    <h2>Gleichzeitig drucken und als PDF speichern</h2>
+    <p>Wählen Sie einen echten Drucker und „Microsoft Print to PDF“. Sie erhalten den Ausdruck und eine PDF-Datei wie Rechnung_2026-11-02_15-45-00.pdf im gewählten Ordner – ohne „Speichern unter“.</p>
+    <h2>Häufige Fragen</h2>
+    <div class="faq"><details><summary><span>Kann Windows ohne Zusatzsoftware auf zwei Druckern gleichzeitig drucken?</span><span class="plus" aria-hidden="true"></span></summary><p>Nein. Windows sendet einen Auftrag an einen Drucker; ein Druckerpool verteilt Aufträge nur und druckt nicht auf allen.</p></details><details><summary><span>Funktioniert es mit Netzwerk- und USB-Druckern?</span><span class="plus" aria-hidden="true"></span></summary><p>Ja. Jeder in Windows installierte Drucker funktioniert, auch Netzwerk-, USB- und Bondrucker.</p></details><details><summary><span>Kann ich das Papierformat festlegen?</span><span class="plus" aria-hidden="true"></span></summary><p>Jeder Mehrfachdrucker hat eine Formateinstellung (A4, A3, A5, Letter, Legal oder automatisch). Weitere Einstellungen kommen vom jeweiligen Drucker.</p></details><details><summary><span>Ist es kostenlos?</span><span class="plus" aria-hidden="true"></span></summary><p>Ja. MultiPrint ist kostenlos und Open Source unter der MIT-Lizenz.</p></details></div>
+    <div class="gcta">
+      <a class="btn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">Für Windows herunterladen</a>
+      <a class="link" href="../../de/">Zurück zu MultiPrint <span class="chev" aria-hidden="true">›</span></a>
+    </div>
+  </div>
+</article>
+</main>
+<footer class="foot">
+  <div class="wrap">
+    <p class="langs"><a href="../../guide/" hreflang="en" lang="en">English</a><a href="../../ar/guide/" hreflang="ar" lang="ar">العربية</a><a href="../../ru/guide/" hreflang="ru" lang="ru">Русский</a><a href="../../de/guide/" hreflang="de" lang="de" aria-current="page">Deutsch</a><a href="../../es/guide/" hreflang="es" lang="es">Español</a><a href="../../fr/guide/" hreflang="fr" lang="fr">Français</a></p>
+    <p><bdi dir="ltr">MultiPrint ist kostenlose Open-Source-Software.</bdi> · <bdi><a href="__REPO_URL__">GitHub</a></bdi></p>
+  </div>
+</footer>
+<script>
+(function () {
+  var d = document.documentElement; d.classList.add('js');
+  var nav = document.querySelector('.nav');
+  function edge() { nav.classList.toggle('scrolled', window.scrollY > 4); }
+  edge(); window.addEventListener('scroll', edge, { passive: true });
+  var items = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { items.forEach(function (el) { el.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  items.forEach(function (el, i) {
+    var sib = el.parentElement ? Array.prototype.indexOf.call(el.parentElement.children, el) : 0;
+    el.style.transitionDelay = Math.min(sib, 4) * 60 + 'ms';
+    io.observe(el);
+  });
+  document.querySelectorAll('.lang .menu a, .foot .langs a').forEach(function (a) {
+    a.addEventListener('click', function () { try { localStorage.setItem('mp-lang', a.getAttribute('hreflang')); } catch (e) {} });
+  });
+  document.querySelectorAll('.lang').forEach(function (m) {
+    document.addEventListener('pointerdown', function (e) { if (m.open && !m.contains(e.target)) m.open = false; });
+  });
+})();
+</script>
+</body>
+</html>

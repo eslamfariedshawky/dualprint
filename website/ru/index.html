@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ru" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-MsjrPZIOX58IM+4+mh/zZpdfSb2EMA1II63IcwH4JKs='; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MultiPrint — печать на несколько принтеров одновременно</title>
+<meta name="description" content="Бесплатная программа для Windows: объединяет несколько принтеров в один виртуальный. Печать сразу на все принтеры и автосохранение PDF без сложных настроек.">
+<meta name="keywords" content="печать на несколько принтеров одновременно, печать на два принтера, подключить два принтера, виртуальный принтер, автосохранение PDF при печати, дублирование печати, мультипринтер Windows, бесплатная программа для печати">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="__SITE_URL__/ru/">
+<link rel="alternate" hreflang="en" href="__SITE_URL__/">
+<link rel="alternate" hreflang="ar" href="__SITE_URL__/ar/">
+<link rel="alternate" hreflang="ru" href="__SITE_URL__/ru/">
+<link rel="alternate" hreflang="de" href="__SITE_URL__/de/">
+<link rel="alternate" hreflang="es" href="__SITE_URL__/es/">
+<link rel="alternate" hreflang="fr" href="__SITE_URL__/fr/">
+<link rel="alternate" hreflang="x-default" href="__SITE_URL__/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MultiPrint">
+<meta property="og:title" content="MultiPrint — печать на несколько принтеров одновременно">
+<meta property="og:description" content="Бесплатная программа для Windows: объединяет несколько принтеров в один виртуальный. Печать сразу на все принтеры и автосохранение PDF без сложных настроек.">
+<meta property="og:url" content="__SITE_URL__/ru/">
+<meta property="og:image" content="__SITE_URL__/assets/screenshot-en.png">
+<meta property="og:image:width" content="1620">
+<meta property="og:image:height" content="1155">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ar_SA"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="fr_FR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+
+<link rel="stylesheet" href="../assets/style.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "MultiPrint", "operatingSystem": "Windows 10, Windows 11", "applicationCategory": "BusinessApplication", "applicationSubCategory": "Printing", "softwareVersion": "2.2.5", "description": "Бесплатная программа для Windows: объединяет несколько принтеров в один виртуальный. Печать сразу на все принтеры и автосохранение PDF без сложных настроек.", "url": "__SITE_URL__/ru/", "downloadUrl": "__REPO_URL__/releases/latest/download/MultiPrint.zip", "image": "__SITE_URL__/assets/screenshot-en.png", "inLanguage": "ru", "license": "https://opensource.org/licenses/MIT", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "featureList": ["Печать на 2+ принтера", "Автосохранение PDF", "Свои имена файлов", "Несколько мультипринтеров", "Формат бумаги", "История печати", "Работает в фоне", "5 языков интерфейса", "Простая настройка"]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Программа MultiPrint бесплатная?", "acceptedAnswer": {"@type": "Answer", "text": "Да. Программа бесплатная, с открытым исходным кодом (лицензия MIT)."}}, {"@type": "Question", "name": "Как печатать на два принтера одновременно?", "acceptedAnswer": {"@type": "Answer", "text": "Создайте мультипринтер в MultiPrint, выберите оба принтера и печатайте на новый принтер из любой программы."}}, {"@type": "Question", "name": "Можно печатать и сохранять PDF одновременно?", "acceptedAnswer": {"@type": "Answer", "text": "Да. Добавьте «Microsoft Print to PDF» и выберите папку — PDF будет сохраняться автоматически без вопросов."}}, {"@type": "Question", "name": "Windows пишет «Windows protected your PC». Это безопасно?", "acceptedAnswer": {"@type": "Answer", "text": "Файл пока не подписан цифровой подписью, поэтому SmartScreen показывает предупреждение. Нажмите «More info» → «Run anyway». Исходный код открыт на GitHub."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "MultiPrint", "url": "__SITE_URL__/ru/", "inLanguage": "ru"}</script>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap navbar">
+    <a class="brand" href="../ru/" aria-label="MultiPrint"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg><span>MultiPrint</span></a>
+    <nav class="links">
+      <a href="#how">Как это работает</a><a href="#features">Возможности</a><a href="#faq">Вопросы</a><a href="../ru/guide/">Инструкция</a>
+    </nav>
+    <details class="lang"><summary aria-label="Язык"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span>Русский</span></summary><div class="menu"><a href="../" hreflang="en" lang="en">English</a><a href="../ar/" hreflang="ar" lang="ar">العربية</a><a href="../ru/" hreflang="ru" lang="ru" aria-current="page">Русский</a><a href="../de/" hreflang="de" lang="de">Deutsch</a><a href="../es/" hreflang="es" lang="es">Español</a><a href="../fr/" hreflang="fr" lang="fr">Français</a></div></details>
+    <a class="navbtn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">Скачать для Windows</a>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Бесплатная программа для Windows: печать на несколько принтеров одновременно</p>
+    <h1 class="reveal">Печать на все принтеры.<br>Одновременно.</h1>
+    <p class="lead">Один виртуальный принтер отправляет каждый документ на выбранные принтеры и автоматически сохраняет копию PDF в вашу папку.</p>
+    <div class="actions">
+      <a class="btn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">Скачать для Windows</a>
+      <a class="link" href="#how">Как это работает <span class="chev" aria-hidden="true">›</span></a>
+    </div>
+    <p class="note"><bdi dir="ltr">Windows 10 / 11</bdi> · Бесплатно · Открытый код · <bdi dir="ltr">v2.2.5</bdi></p>
+  </div>
+  <figure class="shot reveal"><img src="../assets/screenshot-en.png" width="1620" height="1155" alt="Программа MultiPrint: мультипринтер, связанный с принтером Epson и папкой PDF" loading="eager" fetchpriority="high"></figure>
+</section>
+
+<section class="specs-band">
+  <div class="wrap specs"><div class="spec reveal"><strong>2+</strong><span>принтера на документ</span></div><div class="spec reveal"><strong>PDF</strong><span>сохраняется автоматически</span></div><div class="spec reveal"><strong>0</strong><span>сложных настроек</span></div><div class="spec reveal"><strong>Бесплатно</strong><span>и с открытым кодом</span></div></div>
+</section>
+
+<section id="how" class="band light">
+  <div class="wrap">
+    <h2 class="reveal">Всего три шага.</h2>
+    <ol class="tiles three"><li class="tile reveal"><span class="num">1</span><h3>Создайте мультипринтер</h3><p>Откройте MultiPrint, задайте имя и выберите два или более принтера — обычные, PDF или оба.</p></li><li class="tile reveal"><span class="num">2</span><h3>Печатайте как обычно</h3><p>В Word, Excel, браузере или бухгалтерской программе выберите новый принтер по имени.</p></li><li class="tile reveal"><span class="num">3</span><h3>Готово</h3><p>Документ печатается на всех принтерах одновременно, а PDF сохраняется в папку.</p></li></ol>
+    <p class="guide-link"><a class="link" href="../ru/guide/">Как печатать на два принтера одновременно в Windows <span class="chev" aria-hidden="true">›</span></a></p>
+  </div>
+</section>
+
+<section id="features" class="band">
+  <div class="wrap">
+    <h2 class="reveal">Всё нужное. Ничего лишнего.</h2>
+    <div class="tiles four"><div class="tile feat reveal"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg><h3>Простая настройка</h3><p>Без установки драйверов и сложных настроек — первый мультипринтер готов меньше чем за минуту.</p></div><div class="tile feat reveal"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg><h3>Печать на 2+ принтера</h3><p>Одно нажатие отправляет задание на все связанные принтеры.</p></div><div class="tile feat reveal"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M9 15h6"/></svg><h3>Автосохранение PDF</h3><p>Копия PDF в выбранной папке — без окна «Сохранить как».</p></div><div class="tile feat reveal"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18v13H3zM8 7V4h8v3"/></svg><h3>Несколько мультипринтеров</h3><p>Счета, отчёты, чеки — у каждого свои принтеры и папка.</p></div><div class="tile feat reveal"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg><h3>Работает в фоне</h3><p>Запускается вместе с Windows и восстанавливается сам — окно программы можно закрыть.</p></div><div class="tile feat reveal"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h12M9 3v2M5 9c1.5 4 4.5 7 9 9M13 9c-1 3-3.5 6-8 8M14 21l4-9 4 9M15.5 18h5"/></svg><h3>5 языков интерфейса</h3><p>Арабский, английский, испанский, французский и немецкий.</p></div></div>
+  </div>
+</section>
+
+<section class="band black">
+  <div class="wrap">
+    <h2 class="reveal">Создано для бизнеса.</h2>
+    <div class="tiles three"><div class="tile dark reveal"><h3>Магазины и бухгалтерия</h3><p>Счёт печатается на принтере, а PDF-архив ведётся автоматически.</p></div><div class="tile dark reveal"><h3>Офис и склад</h3><p>Одна печать — сразу на офисный и складской принтеры.</p></div><div class="tile dark reveal"><h3>Клиники и сервисные центры</h3><p>Копия клиенту и копия в архив за один шаг.</p></div></div>
+  </div>
+</section>
+
+<section id="faq" class="band light">
+  <div class="wrap narrow">
+    <h2 class="reveal">Частые вопросы</h2>
+    <div class="faq"><details><summary><span>Программа MultiPrint бесплатная?</span><span class="plus" aria-hidden="true"></span></summary><p>Да. Программа бесплатная, с открытым исходным кодом (лицензия MIT).</p></details><details><summary><span>Как печатать на два принтера одновременно?</span><span class="plus" aria-hidden="true"></span></summary><p>Создайте мультипринтер в MultiPrint, выберите оба принтера и печатайте на новый принтер из любой программы.</p></details><details><summary><span>Можно печатать и сохранять PDF одновременно?</span><span class="plus" aria-hidden="true"></span></summary><p>Да. Добавьте «Microsoft Print to PDF» и выберите папку — PDF будет сохраняться автоматически без вопросов.</p></details><details><summary><span>Windows пишет «Windows protected your PC». Это безопасно?</span><span class="plus" aria-hidden="true"></span></summary><p>Файл пока не подписан цифровой подписью, поэтому SmartScreen показывает предупреждение. Нажмите «More info» → «Run anyway». Исходный код открыт на GitHub.</p></details></div>
+  </div>
+</section>
+
+<section class="band final">
+  <div class="wrap">
+    <h2 class="reveal">Печатайте один раз. Везде.</h2>
+    <p class="sublead">Скачайте MultiPrint и создайте первый мультипринтер меньше чем за минуту.</p>
+    <div class="actions">
+      <a class="btn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">Скачать для Windows</a>
+      <a class="link" href="__REPO_URL__">Открыть на GitHub <span class="chev" aria-hidden="true">›</span></a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p class="langs"><a href="../" hreflang="en" lang="en">English</a><a href="../ar/" hreflang="ar" lang="ar">العربية</a><a href="../ru/" hreflang="ru" lang="ru" aria-current="page">Русский</a><a href="../de/" hreflang="de" lang="de">Deutsch</a><a href="../es/" hreflang="es" lang="es">Español</a><a href="../fr/" hreflang="fr" lang="fr">Français</a></p>
+    <p><bdi dir="ltr">MultiPrint — бесплатная программа с открытым исходным кодом.</bdi> · <bdi><a href="__REPO_URL__/blob/main/LICENSE">Лицензия MIT</a></bdi> · <bdi><a href="__REPO_URL__">GitHub</a></bdi> · <bdi><a href="../ru/guide/">Инструкция</a></bdi></p>
+  </div>
+</footer>
+<script>
+(function () {
+  var d = document.documentElement; d.classList.add('js');
+  var nav = document.querySelector('.nav');
+  function edge() { nav.classList.toggle('scrolled', window.scrollY > 4); }
+  edge(); window.addEventListener('scroll', edge, { passive: true });
+  var items = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { items.forEach(function (el) { el.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  items.forEach(function (el, i) {
+    var sib = el.parentElement ? Array.prototype.indexOf.call(el.parentElement.children, el) : 0;
+    el.style.transitionDelay = Math.min(sib, 4) * 60 + 'ms';
+    io.observe(el);
+  });
+  document.querySelectorAll('.lang .menu a, .foot .langs a').forEach(function (a) {
+    a.addEventListener('click', function () { try { localStorage.setItem('mp-lang', a.getAttribute('hreflang')); } catch (e) {} });
+  });
+  document.querySelectorAll('.lang').forEach(function (m) {
+    document.addEventListener('pointerdown', function (e) { if (m.open && !m.contains(e.target)) m.open = false; });
+  });
+})();
+</script>
+</body>
+</html>
