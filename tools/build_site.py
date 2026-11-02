@@ -6,12 +6,12 @@ The full URLs (__SITE_URL__ and __REPO_URL__) are filled in automatically at pub
 """
 import json, os, html, sys, re, hashlib, base64
 sys.path.insert(0, os.path.dirname(__file__))
-from site_content import C, G, LANGS, VERSION
+from site_content import C, G, LANGS, VERSION, BRAND, GUIDE_PUBLISHED, SITE_UPDATED, SITE_VERIFICATION
 
 ROOT = os.path.join(os.path.dirname(__file__), "..", "website")
 SITE = "__SITE_URL__"
 REPO = "__REPO_URL__"
-DL = REPO + "/releases/latest/download/MultiPrint.zip"
+DL = REPO + "/releases/latest/download/DualPrint.zip"
 e = html.escape
 
 def path_of(lang):           # Page path relative to the site root
@@ -52,11 +52,24 @@ def vis(text, rtl):
         t = re.sub(r'(\S+_\d{4}-\d{2}-\d{2}_[\d-]+\.pdf)', r'<bdi dir="ltr">\1</bdi>', t)   # File names
     return t
 
+def footer_text(text, rtl):
+    """Footer line; in Arabic, isolates Latin words (product names) so the parentheses do not get reordered"""
+    t = e(text)
+    if rtl:
+        t = re.sub(r'([A-Za-z][A-Za-z0-9]*)', r'<bdi>\1</bdi>', t)
+    return t
+
+def verification_meta():
+    """Search engine site-verification tags (Search Console etc.); nothing when the token is empty"""
+    return "".join(f'<meta name="{n}" content="{e(v)}">\n' for n, v in SITE_VERIFICATION.items() if v.strip())
+
 def h1_lines(text):
     """Large headline: each sentence on its own line (Apple style)"""
     parts = [x for x in re.split(r'(?<=\.)\s+', text) if x]
     return '<br>'.join(e(x) for x in parts)
 
+# 'mp-lang' is the localStorage key for the visitor's chosen language. It is kept from the
+# 2.x site on purpose (F005): renaming it would forget every saved choice.
 PAGE_JS = '''<script>
 (function () {
   var d = document.documentElement; d.classList.add('js');
@@ -96,7 +109,7 @@ def page(lang):
         for l in LANGS)
     ld_app = {
         "@context": "https://schema.org", "@type": "SoftwareApplication",
-        "name": "MultiPrint", "operatingSystem": "Windows 10, Windows 11",
+        "name": BRAND, "operatingSystem": "Windows 10, Windows 11",
         "applicationCategory": "BusinessApplication", "applicationSubCategory": "Printing",
         "softwareVersion": VERSION, "description": c["desc"], "url": url_of(lang), "downloadUrl": DL,
         "image": SITE + f"/assets/screenshot-{shot}.png", "inLanguage": lang,
@@ -131,10 +144,10 @@ def page(lang):
 <meta name="description" content="{e(c['desc'])}">
 <meta name="keywords" content="{e(c['keywords'])}">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="{url_of(lang)}">
+{verification_meta()}<link rel="canonical" href="{url_of(lang)}">
 {alternates}
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="MultiPrint">
+<meta property="og:site_name" content="{BRAND}">
 <meta property="og:title" content="{e(c['title'])}">
 <meta property="og:description" content="{e(c['desc'])}">
 <meta property="og:url" content="{url_of(lang)}">
@@ -152,12 +165,12 @@ def page(lang):
 <link rel="stylesheet" href="{rel}assets/style.css">
 <script type="application/ld+json">{json.dumps(ld_app, ensure_ascii=False)}</script>
 <script type="application/ld+json">{json.dumps(ld_faq, ensure_ascii=False)}</script>
-<script type="application/ld+json">{json.dumps({"@context": "https://schema.org", "@type": "WebSite", "name": "MultiPrint", "url": url_of(lang), "inLanguage": lang}, ensure_ascii=False)}</script>
+<script type="application/ld+json">{json.dumps({"@context": "https://schema.org", "@type": "WebSite", "name": BRAND, "url": url_of(lang), "inLanguage": lang}, ensure_ascii=False)}</script>
 </head>
 <body>
 {autolang}<header class="nav">
   <div class="wrap navbar">
-    <a class="brand" href="{rel}{path_of(lang)}" aria-label="MultiPrint">{svg(ICONS[0], 18)}<span>MultiPrint</span></a>
+    <a class="brand" href="{rel}{path_of(lang)}" aria-label="{BRAND}">{svg(ICONS[0], 18)}<span>{BRAND}</span></a>
     <nav class="links">
       <a href="#how">{e(c['nav_how'])}</a><a href="#features">{e(c['nav_features'])}</a><a href="#faq">{e(c['nav_faq'])}</a><a href="{rel}{guide_path(lang)}">{e(G[lang]['nav'])}</a>
     </nav>
@@ -229,7 +242,7 @@ def page(lang):
 <footer class="foot">
   <div class="wrap">
     <p class="langs">{langmenu}</p>
-    <p><bdi dir="{c['dir']}">{e(c['footer'])}</bdi> · <bdi><a href="{REPO}/blob/main/LICENSE">{e(c.get('license', 'MIT License'))}</a></bdi> · <bdi><a href="{REPO}">GitHub</a></bdi> · <bdi><a href="{rel}{guide_path(lang)}">{e(G[lang]['nav'])}</a></bdi></p>
+    <p><bdi dir="{c['dir']}">{footer_text(c['footer'], c['dir'] == 'rtl')}</bdi> · <bdi><a href="{REPO}/blob/main/LICENSE">{e(c.get('license', 'MIT License'))}</a></bdi> · <bdi><a href="{REPO}">GitHub</a></bdi> · <bdi><a href="{rel}{guide_path(lang)}">{e(G[lang]['nav'])}</a></bdi></p>
   </div>
 </footer>
 {PAGE_JS}
@@ -253,10 +266,11 @@ def guide_page(lang):
     ld = [
         {"@context": "https://schema.org", "@type": "Article", "headline": g["h1"], "description": g["desc"],
          "inLanguage": lang, "url": guide_url(lang), "image": SITE + f"/assets/screenshot-{shot}.png",
-         "author": {"@type": "Organization", "name": "MultiPrint"}, "publisher": {"@type": "Organization", "name": "MultiPrint"},
-         "about": {"@type": "SoftwareApplication", "name": "MultiPrint", "operatingSystem": "Windows 10, Windows 11"}},
+         "datePublished": GUIDE_PUBLISHED, "dateModified": SITE_UPDATED,
+         "author": {"@type": "Organization", "name": BRAND}, "publisher": {"@type": "Organization", "name": BRAND},
+         "about": {"@type": "SoftwareApplication", "name": BRAND, "operatingSystem": "Windows 10, Windows 11"}},
         {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-            {"@type": "ListItem", "position": 1, "name": "MultiPrint", "item": url_of(lang)},
+            {"@type": "ListItem", "position": 1, "name": BRAND, "item": url_of(lang)},
             {"@type": "ListItem", "position": 2, "name": g["nav"], "item": guide_url(lang)}]},
         {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in g["faq"]]},
@@ -272,10 +286,10 @@ def guide_page(lang):
 <title>{e(g['title'])}</title>
 <meta name="description" content="{e(g['desc'])}">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="{guide_url(lang)}">
+{verification_meta()}<link rel="canonical" href="{guide_url(lang)}">
 {alternates}
 <meta property="og:type" content="article">
-<meta property="og:site_name" content="MultiPrint">
+<meta property="og:site_name" content="{BRAND}">
 <meta property="og:title" content="{e(g['title'])}">
 <meta property="og:description" content="{e(g['desc'])}">
 <meta property="og:url" content="{guide_url(lang)}">
@@ -291,7 +305,7 @@ def guide_page(lang):
 <body>
 <header class="nav">
   <div class="wrap navbar">
-    <a class="brand" href="{rel}{path_of(lang)}" aria-label="MultiPrint">{svg(ICONS[0], 18)}<span>MultiPrint</span></a>
+    <a class="brand" href="{rel}{path_of(lang)}" aria-label="{BRAND}">{svg(ICONS[0], 18)}<span>{BRAND}</span></a>
     <nav class="links"><a href="{rel}{path_of(lang)}">{e(g['back'])}</a></nav>
     <details class="lang"><summary aria-label="{e(c['langlabel'])}">{svg("M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18", 15)}<span>{e(c['name'])}</span></summary><div class="menu">{langmenu}</div></details>
     <a class="navbtn" href="{DL}">{e(c['dl'])}</a>
@@ -300,7 +314,7 @@ def guide_page(lang):
 <main>
 <article class="article">
   <div class="wrap narrow">
-    <nav class="crumbs" aria-label="breadcrumb"><a href="{rel}{path_of(lang)}">MultiPrint</a> {chev} <span>{e(g['nav'])}</span></nav>
+    <nav class="crumbs" aria-label="breadcrumb"><a href="{rel}{path_of(lang)}">{BRAND}</a> {chev} <span>{e(g['nav'])}</span></nav>
     <h1>{e(g['h1'])}</h1>
     <p class="lead">{vis(g['lead'], rtl)}</p>
     <p><a class="btn" href="{DL}">{e(g['cta'])}</a></p>
@@ -323,7 +337,7 @@ def guide_page(lang):
 <footer class="foot">
   <div class="wrap">
     <p class="langs">{langmenu}</p>
-    <p><bdi dir="{c['dir']}">{e(c['footer'])}</bdi> · <bdi><a href="{REPO}">GitHub</a></bdi></p>
+    <p><bdi dir="{c['dir']}">{footer_text(c['footer'], c['dir'] == 'rtl')}</bdi> · <bdi><a href="{REPO}">GitHub</a></bdi></p>
   </div>
 </footer>
 {PAGE_JS}
@@ -517,19 +531,24 @@ def main():
     for lang in LANGS:
         alts = "".join(f'<xhtml:link rel="alternate" hreflang="{l}" href="{url_of(l)}"/>' for l in LANGS)
         alts += f'<xhtml:link rel="alternate" hreflang="x-default" href="{url_of("en")}"/>'
-        urls.append(f"<url><loc>{url_of(lang)}</loc>{alts}<changefreq>monthly</changefreq><priority>{'1.0' if lang == 'en' else '0.9'}</priority></url>")
+        urls.append(f"<url><loc>{url_of(lang)}</loc><lastmod>{SITE_UPDATED}</lastmod>{alts}<changefreq>monthly</changefreq><priority>{'1.0' if lang == 'en' else '0.9'}</priority></url>")
     for lang in LANGS:
         alts = "".join(f'<xhtml:link rel="alternate" hreflang="{l}" href="{guide_url(l)}"/>' for l in LANGS)
         alts += f'<xhtml:link rel="alternate" hreflang="x-default" href="{guide_url("en")}"/>'
-        urls.append(f"<url><loc>{guide_url(lang)}</loc>{alts}<changefreq>monthly</changefreq><priority>0.8</priority></url>")
+        urls.append(f"<url><loc>{guide_url(lang)}</loc><lastmod>{SITE_UPDATED}</lastmod>{alts}<changefreq>monthly</changefreq><priority>0.8</priority></url>")
     with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
                 'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' + "\n".join(urls) + "\n</urlset>\n")
     with open(os.path.join(ROOT, "robots.txt"), "w", encoding="utf-8") as f:
         f.write(f"User-agent: *\nAllow: /\nSitemap: {SITE}/sitemap.xml\n")
     with open(os.path.join(ROOT, "404.html"), "w", encoding="utf-8") as f:
-        f.write(f'<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex"><title>MultiPrint</title>'
-                f'<meta http-equiv="refresh" content="0; url={SITE}/"><a href="{SITE}/">MultiPrint</a>')
+        # Real 404 status from GitHub Pages + noindex; the visitor sees a short message, then goes home
+        f.write(f'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
+                f'<meta name="robots" content="noindex"><title>Page not found – {BRAND}</title>'
+                f'<meta http-equiv="refresh" content="5; url={SITE}/">'
+                f'<body style="font-family:system-ui,sans-serif;text-align:center;padding:4rem 1rem">'
+                f'<h1>Page not found</h1><p>This page does not exist. Taking you to the {BRAND} home page…</p>'
+                f'<p><a href="{SITE}/">Go to {BRAND} now</a></p></body></html>\n')
     print("Website built in", os.path.abspath(ROOT))
 
 if __name__ == "__main__":

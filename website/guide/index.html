@@ -5,8 +5,8 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-MsjrPZIOX58IM+4+mh/zZpdfSb2EMA1II63IcwH4JKs='; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>How to Print to Two Printers at Once in Windows 10/11</title>
-<meta name="description" content="Send one print job to two or more printers at once in Windows 10 and 11, and save a PDF copy automatically. Why printer pooling won&#x27;t do it, and the free fix.">
+<title>Print to Two Printers at Once in Windows 10/11 | DualPrint</title>
+<meta name="description" content="Send one print job to two or more printers at once in Windows 10 and 11 and save a PDF copy automatically with DualPrint. Why printer pooling won&#x27;t do it.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="__SITE_URL__/guide/">
 <link rel="alternate" hreflang="en" href="__SITE_URL__/guide/">
@@ -17,9 +17,9 @@
 <link rel="alternate" hreflang="fr" href="__SITE_URL__/fr/guide/">
 <link rel="alternate" hreflang="x-default" href="__SITE_URL__/guide/">
 <meta property="og:type" content="article">
-<meta property="og:site_name" content="MultiPrint">
-<meta property="og:title" content="How to Print to Two Printers at Once in Windows 10/11">
-<meta property="og:description" content="Send one print job to two or more printers at once in Windows 10 and 11, and save a PDF copy automatically. Why printer pooling won&#x27;t do it, and the free fix.">
+<meta property="og:site_name" content="DualPrint">
+<meta property="og:title" content="Print to Two Printers at Once in Windows 10/11 | DualPrint">
+<meta property="og:description" content="Send one print job to two or more printers at once in Windows 10 and 11 and save a PDF copy automatically with DualPrint. Why printer pooling won&#x27;t do it.">
 <meta property="og:url" content="__SITE_URL__/guide/">
 <meta property="og:image" content="__SITE_URL__/assets/screenshot-en.png">
 <meta property="og:locale" content="en_US">
@@ -28,38 +28,38 @@
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 
 <link rel="stylesheet" href="../assets/style.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "How to print to two printers at the same time in Windows", "description": "Send one print job to two or more printers at once in Windows 10 and 11, and save a PDF copy automatically. Why printer pooling won't do it, and the free fix.", "inLanguage": "en", "url": "__SITE_URL__/guide/", "image": "__SITE_URL__/assets/screenshot-en.png", "author": {"@type": "Organization", "name": "MultiPrint"}, "publisher": {"@type": "Organization", "name": "MultiPrint"}, "about": {"@type": "SoftwareApplication", "name": "MultiPrint", "operatingSystem": "Windows 10, Windows 11"}}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "MultiPrint", "item": "__SITE_URL__/"}, {"@type": "ListItem", "position": 2, "name": "Guide", "item": "__SITE_URL__/guide/"}]}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Can Windows print to two printers at once without extra software?", "acceptedAnswer": {"@type": "Answer", "text": "No. Windows sends a job to one printer. Printer pooling only spreads jobs across printers; it does not print on all of them."}}, {"@type": "Question", "name": "Does it work with network and USB printers?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Any printer installed in Windows can be used, including network, USB and receipt printers."}}, {"@type": "Question", "name": "Can I use different paper sizes?", "acceptedAnswer": {"@type": "Answer", "text": "Each multi printer has a paper size setting (A4, A3, A5, Letter, Legal or automatic). Other settings use each printer's defaults."}}, {"@type": "Question", "name": "Is it free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. MultiPrint is free and open source under the MIT license."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "How to print to two printers at the same time in Windows", "description": "Send one print job to two or more printers at once in Windows 10 and 11 and save a PDF copy automatically with DualPrint. Why printer pooling won't do it.", "inLanguage": "en", "url": "__SITE_URL__/guide/", "image": "__SITE_URL__/assets/screenshot-en.png", "datePublished": "2026-11-03", "dateModified": "2026-11-03", "author": {"@type": "Organization", "name": "DualPrint"}, "publisher": {"@type": "Organization", "name": "DualPrint"}, "about": {"@type": "SoftwareApplication", "name": "DualPrint", "operatingSystem": "Windows 10, Windows 11"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "DualPrint", "item": "__SITE_URL__/"}, {"@type": "ListItem", "position": 2, "name": "Guide", "item": "__SITE_URL__/guide/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Can Windows print to two printers at once without extra software?", "acceptedAnswer": {"@type": "Answer", "text": "No. Windows sends a job to one printer. Printer pooling only spreads jobs across printers; it does not print on all of them."}}, {"@type": "Question", "name": "Does it work with network and USB printers?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Any printer installed in Windows can be used, including network, USB and receipt printers."}}, {"@type": "Question", "name": "Can I use different paper sizes?", "acceptedAnswer": {"@type": "Answer", "text": "Each multi printer has a paper size setting (A4, A3, A5, Letter, Legal or automatic). Other settings use each printer's defaults."}}, {"@type": "Question", "name": "Is it free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. DualPrint is free and open source under the MIT license."}}]}</script>
 </head>
 <body>
 <header class="nav">
   <div class="wrap navbar">
-    <a class="brand" href="../" aria-label="MultiPrint"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg><span>MultiPrint</span></a>
-    <nav class="links"><a href="../">Back to MultiPrint</a></nav>
+    <a class="brand" href="../" aria-label="DualPrint"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg><span>DualPrint</span></a>
+    <nav class="links"><a href="../">Back to DualPrint</a></nav>
     <details class="lang"><summary aria-label="Language"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span>English</span></summary><div class="menu"><a href="../guide/" hreflang="en" lang="en" aria-current="page">English</a><a href="../ar/guide/" hreflang="ar" lang="ar">العربية</a><a href="../ru/guide/" hreflang="ru" lang="ru">Русский</a><a href="../de/guide/" hreflang="de" lang="de">Deutsch</a><a href="../es/guide/" hreflang="es" lang="es">Español</a><a href="../fr/guide/" hreflang="fr" lang="fr">Français</a></div></details>
-    <a class="navbtn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">Download for Windows</a>
+    <a class="navbtn" href="__REPO_URL__/releases/latest/download/DualPrint.zip">Download for Windows</a>
   </div>
 </header>
 <main>
 <article class="article">
   <div class="wrap narrow">
-    <nav class="crumbs" aria-label="breadcrumb"><a href="../">MultiPrint</a> <span class="chev" aria-hidden="true">›</span> <span>Guide</span></nav>
+    <nav class="crumbs" aria-label="breadcrumb"><a href="../">DualPrint</a> <span class="chev" aria-hidden="true">›</span> <span>Guide</span></nav>
     <h1>How to print to two printers at the same time in Windows</h1>
     <p class="lead">Windows sends every print job to one printer only. Here is how to print the same document on two or more printers at once, and keep an automatic PDF copy, in about a minute.</p>
-    <p><a class="btn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">Download for Windows</a></p>
+    <p><a class="btn" href="__REPO_URL__/releases/latest/download/DualPrint.zip">Download for Windows</a></p>
     <h2>Why Windows can&#x27;t do it by default</h2>
     <p>When you press Print, Windows hands the job to exactly one printer. There is no built-in setting to duplicate it.</p><p>“Printer pooling” in Printer properties is often suggested, but it does something else: it sends each job to the first free printer in the pool, so every page is printed once, not on every printer.</p><p>Printing the document twice works, but it is slow and easy to forget, especially for invoices that need a paper copy and an archived PDF.</p>
-    <h2>Print to multiple printers with MultiPrint</h2>
-    <ol class="gsteps"><li><h3>Download MultiPrint</h3><p>Download the free app for Windows 10 or 11, unzip it and run MultiPrint.exe. Approve the administrator prompt once.</p></li><li><h3>Add a multi printer</h3><p>Click Add printer and give it a name, for example “Invoices”.</p></li><li><h3>Choose the printers</h3><p>Tick two or more printers. Add “Microsoft Print to PDF” if you also want a PDF copy.</p></li><li><h3>Pick the PDF folder</h3><p>If PDF is selected, choose a folder and an optional file name prefix. Files are saved there automatically.</p></li><li><h3>Print from any app</h3><p>In Word, Excel, your browser or accounting software, choose the new printer by name and print.</p></li><li><h3>Check the history</h3><p>Each document appears in the print history with every destination and its result.</p></li></ol>
-    <figure class="gshot"><img src="../assets/screenshot-en.png" width="1620" height="1155" alt="MultiPrint app showing a multi printer linked to an Epson printer and a PDF folder" loading="lazy"></figure>
+    <h2>Print to multiple printers with DualPrint</h2>
+    <ol class="gsteps"><li><h3>Download DualPrint</h3><p>Download the free app for Windows 10 or 11, unzip it and run DualPrint.exe. Approve the administrator prompt once.</p></li><li><h3>Add a multi printer</h3><p>Click Add printer and give it a name, for example “Invoices”.</p></li><li><h3>Choose the printers</h3><p>Tick two or more printers. Add “Microsoft Print to PDF” if you also want a PDF copy.</p></li><li><h3>Pick the PDF folder</h3><p>If PDF is selected, choose a folder and an optional file name prefix. Files are saved there automatically.</p></li><li><h3>Print from any app</h3><p>In Word, Excel, your browser or accounting software, choose the new printer by name and print.</p></li><li><h3>Check the history</h3><p>Each document appears in the print history with every destination and its result.</p></li></ol>
+    <figure class="gshot"><img src="../assets/screenshot-en.png" width="1620" height="1155" alt="DualPrint app showing a multi printer linked to an Epson printer and a PDF folder" loading="lazy"></figure>
     <h2>Print and save as PDF at the same time</h2>
     <p>Select one real printer plus “Microsoft Print to PDF”. You get the paper copy and a PDF named like Invoice_2026-11-02_15-45-00.pdf in the folder you chose, without a Save As window.</p>
     <h2>Frequently asked questions</h2>
-    <div class="faq"><details><summary><span>Can Windows print to two printers at once without extra software?</span><span class="plus" aria-hidden="true"></span></summary><p>No. Windows sends a job to one printer. Printer pooling only spreads jobs across printers; it does not print on all of them.</p></details><details><summary><span>Does it work with network and USB printers?</span><span class="plus" aria-hidden="true"></span></summary><p>Yes. Any printer installed in Windows can be used, including network, USB and receipt printers.</p></details><details><summary><span>Can I use different paper sizes?</span><span class="plus" aria-hidden="true"></span></summary><p>Each multi printer has a paper size setting (A4, A3, A5, Letter, Legal or automatic). Other settings use each printer&#x27;s defaults.</p></details><details><summary><span>Is it free?</span><span class="plus" aria-hidden="true"></span></summary><p>Yes. MultiPrint is free and open source under the MIT license.</p></details></div>
+    <div class="faq"><details><summary><span>Can Windows print to two printers at once without extra software?</span><span class="plus" aria-hidden="true"></span></summary><p>No. Windows sends a job to one printer. Printer pooling only spreads jobs across printers; it does not print on all of them.</p></details><details><summary><span>Does it work with network and USB printers?</span><span class="plus" aria-hidden="true"></span></summary><p>Yes. Any printer installed in Windows can be used, including network, USB and receipt printers.</p></details><details><summary><span>Can I use different paper sizes?</span><span class="plus" aria-hidden="true"></span></summary><p>Each multi printer has a paper size setting (A4, A3, A5, Letter, Legal or automatic). Other settings use each printer&#x27;s defaults.</p></details><details><summary><span>Is it free?</span><span class="plus" aria-hidden="true"></span></summary><p>Yes. DualPrint is free and open source under the MIT license.</p></details></div>
     <div class="gcta">
-      <a class="btn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">Download for Windows</a>
-      <a class="link" href="../">Back to MultiPrint <span class="chev" aria-hidden="true">›</span></a>
+      <a class="btn" href="__REPO_URL__/releases/latest/download/DualPrint.zip">Download for Windows</a>
+      <a class="link" href="../">Back to DualPrint <span class="chev" aria-hidden="true">›</span></a>
     </div>
   </div>
 </article>
@@ -67,7 +67,7 @@
 <footer class="foot">
   <div class="wrap">
     <p class="langs"><a href="../guide/" hreflang="en" lang="en" aria-current="page">English</a><a href="../ar/guide/" hreflang="ar" lang="ar">العربية</a><a href="../ru/guide/" hreflang="ru" lang="ru">Русский</a><a href="../de/guide/" hreflang="de" lang="de">Deutsch</a><a href="../es/guide/" hreflang="es" lang="es">Español</a><a href="../fr/guide/" hreflang="fr" lang="fr">Français</a></p>
-    <p><bdi dir="ltr">MultiPrint is free and open-source software.</bdi> · <bdi><a href="__REPO_URL__">GitHub</a></bdi></p>
+    <p><bdi dir="ltr">DualPrint (formerly MultiPrint) is free and open-source software.</bdi> · <bdi><a href="__REPO_URL__">GitHub</a></bdi></p>
   </div>
 </footer>
 <script>

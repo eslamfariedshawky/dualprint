@@ -5,8 +5,8 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-MsjrPZIOX58IM+4+mh/zZpdfSb2EMA1II63IcwH4JKs='; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>كيف تطبع على طابعتين في الوقت نفسه في Windows 10 و11</title>
-<meta name="description" content="اطبع المستند على طابعتين أو أكثر في الوقت نفسه في Windows 10 و11 مع حفظ نسخة PDF تلقائيًا، ولماذا لا تؤدي ميزة Printer Pooling هذه المهمة.">
+<title>الطباعة على طابعتين في نفس الوقت في Windows | DualPrint</title>
+<meta name="description" content="اطبع المستند على طابعتين أو أكثر في الوقت نفسه في Windows 10 و11 مع حفظ نسخة PDF تلقائيًا باستخدام DualPrint، ولماذا لا تكفي ميزة Printer Pooling.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="__SITE_URL__/ar/guide/">
 <link rel="alternate" hreflang="en" href="__SITE_URL__/guide/">
@@ -17,9 +17,9 @@
 <link rel="alternate" hreflang="fr" href="__SITE_URL__/fr/guide/">
 <link rel="alternate" hreflang="x-default" href="__SITE_URL__/guide/">
 <meta property="og:type" content="article">
-<meta property="og:site_name" content="MultiPrint">
-<meta property="og:title" content="كيف تطبع على طابعتين في الوقت نفسه في Windows 10 و11">
-<meta property="og:description" content="اطبع المستند على طابعتين أو أكثر في الوقت نفسه في Windows 10 و11 مع حفظ نسخة PDF تلقائيًا، ولماذا لا تؤدي ميزة Printer Pooling هذه المهمة.">
+<meta property="og:site_name" content="DualPrint">
+<meta property="og:title" content="الطباعة على طابعتين في نفس الوقت في Windows | DualPrint">
+<meta property="og:description" content="اطبع المستند على طابعتين أو أكثر في الوقت نفسه في Windows 10 و11 مع حفظ نسخة PDF تلقائيًا باستخدام DualPrint، ولماذا لا تكفي ميزة Printer Pooling.">
 <meta property="og:url" content="__SITE_URL__/ar/guide/">
 <meta property="og:image" content="__SITE_URL__/assets/screenshot-ar.png">
 <meta property="og:locale" content="ar_SA">
@@ -30,38 +30,38 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/style.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "كيف تطبع على طابعتين في الوقت نفسه في Windows", "description": "اطبع المستند على طابعتين أو أكثر في الوقت نفسه في Windows 10 و11 مع حفظ نسخة PDF تلقائيًا، ولماذا لا تؤدي ميزة Printer Pooling هذه المهمة.", "inLanguage": "ar", "url": "__SITE_URL__/ar/guide/", "image": "__SITE_URL__/assets/screenshot-ar.png", "author": {"@type": "Organization", "name": "MultiPrint"}, "publisher": {"@type": "Organization", "name": "MultiPrint"}, "about": {"@type": "SoftwareApplication", "name": "MultiPrint", "operatingSystem": "Windows 10, Windows 11"}}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "MultiPrint", "item": "__SITE_URL__/ar/"}, {"@type": "ListItem", "position": 2, "name": "الدليل", "item": "__SITE_URL__/ar/guide/"}]}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "هل يمكن الطباعة على طابعتين في Windows دون برامج إضافية؟", "acceptedAnswer": {"@type": "Answer", "text": "لا. يرسل Windows أمر الطباعة إلى طابعة واحدة، وميزة Printer Pooling توزّع المهام فقط ولا تطبع على جميع الطابعات."}}, {"@type": "Question", "name": "هل يعمل مع طابعات الشبكة وطابعات USB؟", "acceptedAnswer": {"@type": "Answer", "text": "نعم، يمكن استخدام أي طابعة مثبتة في Windows، بما فيها طابعات الشبكة وUSB وطابعات الإيصالات."}}, {"@type": "Question", "name": "هل يمكن تحديد مقاس الورق؟", "acceptedAnswer": {"@type": "Answer", "text": "لكل طابعة متعددة إعداد لمقاس الورق (A4 أو A3 أو A5 أو Letter أو Legal أو تلقائي)، وتُستخدم الإعدادات الافتراضية لكل طابعة فيما عدا ذلك."}}, {"@type": "Question", "name": "هل البرنامج مجاني؟", "acceptedAnswer": {"@type": "Answer", "text": "نعم، MultiPrint مجاني ومفتوح المصدر بموجب ترخيص MIT."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "كيف تطبع على طابعتين في الوقت نفسه في Windows", "description": "اطبع المستند على طابعتين أو أكثر في الوقت نفسه في Windows 10 و11 مع حفظ نسخة PDF تلقائيًا باستخدام DualPrint، ولماذا لا تكفي ميزة Printer Pooling.", "inLanguage": "ar", "url": "__SITE_URL__/ar/guide/", "image": "__SITE_URL__/assets/screenshot-ar.png", "datePublished": "2026-11-03", "dateModified": "2026-11-03", "author": {"@type": "Organization", "name": "DualPrint"}, "publisher": {"@type": "Organization", "name": "DualPrint"}, "about": {"@type": "SoftwareApplication", "name": "DualPrint", "operatingSystem": "Windows 10, Windows 11"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "DualPrint", "item": "__SITE_URL__/ar/"}, {"@type": "ListItem", "position": 2, "name": "الدليل", "item": "__SITE_URL__/ar/guide/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "هل يمكن الطباعة على طابعتين في Windows دون برامج إضافية؟", "acceptedAnswer": {"@type": "Answer", "text": "لا. يرسل Windows أمر الطباعة إلى طابعة واحدة، وميزة Printer Pooling توزّع المهام فقط ولا تطبع على جميع الطابعات."}}, {"@type": "Question", "name": "هل يعمل مع طابعات الشبكة وطابعات USB؟", "acceptedAnswer": {"@type": "Answer", "text": "نعم، يمكن استخدام أي طابعة مثبتة في Windows، بما فيها طابعات الشبكة وUSB وطابعات الإيصالات."}}, {"@type": "Question", "name": "هل يمكن تحديد مقاس الورق؟", "acceptedAnswer": {"@type": "Answer", "text": "لكل طابعة متعددة إعداد لمقاس الورق (A4 أو A3 أو A5 أو Letter أو Legal أو تلقائي)، وتُستخدم الإعدادات الافتراضية لكل طابعة فيما عدا ذلك."}}, {"@type": "Question", "name": "هل البرنامج مجاني؟", "acceptedAnswer": {"@type": "Answer", "text": "نعم، DualPrint مجاني ومفتوح المصدر بموجب ترخيص MIT."}}]}</script>
 </head>
 <body>
 <header class="nav">
   <div class="wrap navbar">
-    <a class="brand" href="../../ar/" aria-label="MultiPrint"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg><span>MultiPrint</span></a>
-    <nav class="links"><a href="../../ar/">العودة إلى MultiPrint</a></nav>
+    <a class="brand" href="../../ar/" aria-label="DualPrint"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg><span>DualPrint</span></a>
+    <nav class="links"><a href="../../ar/">العودة إلى DualPrint</a></nav>
     <details class="lang"><summary aria-label="اللغة"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span>العربية</span></summary><div class="menu"><a href="../../guide/" hreflang="en" lang="en">English</a><a href="../../ar/guide/" hreflang="ar" lang="ar" aria-current="page">العربية</a><a href="../../ru/guide/" hreflang="ru" lang="ru">Русский</a><a href="../../de/guide/" hreflang="de" lang="de">Deutsch</a><a href="../../es/guide/" hreflang="es" lang="es">Español</a><a href="../../fr/guide/" hreflang="fr" lang="fr">Français</a></div></details>
-    <a class="navbtn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">تنزيل لنظام Windows</a>
+    <a class="navbtn" href="__REPO_URL__/releases/latest/download/DualPrint.zip">تنزيل لنظام Windows</a>
   </div>
 </header>
 <main>
 <article class="article">
   <div class="wrap narrow">
-    <nav class="crumbs" aria-label="breadcrumb"><a href="../../ar/">MultiPrint</a> <span class="chev" aria-hidden="true">‹</span> <span>الدليل</span></nav>
+    <nav class="crumbs" aria-label="breadcrumb"><a href="../../ar/">DualPrint</a> <span class="chev" aria-hidden="true">‹</span> <span>الدليل</span></nav>
     <h1>كيف تطبع على طابعتين في الوقت نفسه في Windows</h1>
     <p class="lead">يرسل Windows كل أمر طباعة إلى طابعة واحدة فقط. يشرح هذا الدليل كيفية طباعة المستند نفسه على طابعتين أو أكثر في آنٍ واحد، مع الاحتفاظ بنسخة PDF تلقائيًا، في دقيقة تقريبًا.</p>
-    <p><a class="btn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">تنزيل لنظام Windows</a></p>
+    <p><a class="btn" href="__REPO_URL__/releases/latest/download/DualPrint.zip">تنزيل لنظام Windows</a></p>
     <h2>لماذا لا يتيح Windows ذلك افتراضيًا؟</h2>
     <p>عند الضغط على «طباعة» يرسل Windows المستند إلى طابعة واحدة فقط، ولا يوجد إعداد مدمج لتكراره على طابعة أخرى.</p><p>يُقترح كثيرًا استخدام ميزة «<bdi>Printer Pooling</bdi>» من خصائص الطابعة، لكنها توزّع المهام على أول طابعة متاحة، فيُطبع المستند مرة واحدة لا على جميع الطابعات.</p><p>إعادة الطباعة يدويًا مرتين حلٌّ بطيء ومعرّض للنسيان، خاصة في الفواتير التي تحتاج إلى نسخة ورقية ونسخة PDF للأرشيف.</p>
-    <h2>الطباعة على عدة طابعات باستخدام MultiPrint</h2>
-    <ol class="gsteps"><li><h3>نزّل MultiPrint</h3><p>نزّل البرنامج المجاني لنظام Windows 10 أو 11، وفكّ الضغط وشغّل MultiPrint.exe، ووافق على طلب صلاحيات المسؤول مرة واحدة.</p></li><li><h3>أضف طابعة متعددة</h3><p>اختر «إضافة طابعة» وأدخل اسمًا لها، مثل «الفواتير».</p></li><li><h3>اختر الطابعات</h3><p>حدّد طابعتين أو أكثر، وأضف «<bdi>Microsoft Print to PDF</bdi>» إذا أردت نسخة PDF أيضًا.</p></li><li><h3>حدّد مجلد PDF</h3><p>عند اختيار PDF، حدّد المجلد وبداية اسم الملف (اختياريًا)، وستُحفظ الملفات فيه تلقائيًا.</p></li><li><h3>اطبع من أي تطبيق</h3><p>من Word أو Excel أو المتصفح أو النظام المحاسبي، اختر الطابعة الجديدة باسمها ثم اطبع.</p></li><li><h3>راجع سجل الطباعة</h3><p>يظهر كل مستند في سجل الطباعة مع وجهاته ونتيجة كلٍّ منها.</p></li></ol>
-    <figure class="gshot"><img src="../../assets/screenshot-ar.png" width="1620" height="1155" alt="واجهة برنامج MultiPrint تعرض طابعة متعددة مرتبطة بطابعة Epson ومجلد PDF" loading="lazy"></figure>
+    <h2>الطباعة على عدة طابعات باستخدام DualPrint</h2>
+    <ol class="gsteps"><li><h3>نزّل DualPrint</h3><p>نزّل البرنامج المجاني لنظام Windows 10 أو 11، وفكّ الضغط وشغّل DualPrint.exe، ووافق على طلب صلاحيات المسؤول مرة واحدة.</p></li><li><h3>أضف طابعة متعددة</h3><p>اختر «إضافة طابعة» وأدخل اسمًا لها، مثل «الفواتير».</p></li><li><h3>اختر الطابعات</h3><p>حدّد طابعتين أو أكثر، وأضف «<bdi>Microsoft Print to PDF</bdi>» إذا أردت نسخة PDF أيضًا.</p></li><li><h3>حدّد مجلد PDF</h3><p>عند اختيار PDF، حدّد المجلد وبداية اسم الملف (اختياريًا)، وستُحفظ الملفات فيه تلقائيًا.</p></li><li><h3>اطبع من أي تطبيق</h3><p>من Word أو Excel أو المتصفح أو النظام المحاسبي، اختر الطابعة الجديدة باسمها ثم اطبع.</p></li><li><h3>راجع سجل الطباعة</h3><p>يظهر كل مستند في سجل الطباعة مع وجهاته ونتيجة كلٍّ منها.</p></li></ol>
+    <figure class="gshot"><img src="../../assets/screenshot-ar.png" width="1620" height="1155" alt="واجهة برنامج DualPrint تعرض طابعة متعددة مرتبطة بطابعة Epson ومجلد PDF" loading="lazy"></figure>
     <h2>الطباعة والحفظ بصيغة PDF في الوقت نفسه</h2>
     <p>اختر طابعة فعلية مع «<bdi>Microsoft Print to PDF</bdi>»، فتحصل على النسخة الورقية وعلى ملف PDF باسم مثل <bdi dir="ltr">فاتورة_2026-11-02_15-45-00.pdf</bdi> في المجلد المحدد، دون نافذة «حفظ باسم».</p>
     <h2>الأسئلة الشائعة</h2>
-    <div class="faq"><details><summary><span>هل يمكن الطباعة على طابعتين في Windows دون برامج إضافية؟</span><span class="plus" aria-hidden="true"></span></summary><p>لا. يرسل Windows أمر الطباعة إلى طابعة واحدة، وميزة Printer Pooling توزّع المهام فقط ولا تطبع على جميع الطابعات.</p></details><details><summary><span>هل يعمل مع طابعات الشبكة وطابعات USB؟</span><span class="plus" aria-hidden="true"></span></summary><p>نعم، يمكن استخدام أي طابعة مثبتة في Windows، بما فيها طابعات الشبكة وUSB وطابعات الإيصالات.</p></details><details><summary><span>هل يمكن تحديد مقاس الورق؟</span><span class="plus" aria-hidden="true"></span></summary><p>لكل طابعة متعددة إعداد لمقاس الورق (A4 أو A3 أو A5 أو Letter أو Legal أو تلقائي)، وتُستخدم الإعدادات الافتراضية لكل طابعة فيما عدا ذلك.</p></details><details><summary><span>هل البرنامج مجاني؟</span><span class="plus" aria-hidden="true"></span></summary><p>نعم، MultiPrint مجاني ومفتوح المصدر بموجب ترخيص MIT.</p></details></div>
+    <div class="faq"><details><summary><span>هل يمكن الطباعة على طابعتين في Windows دون برامج إضافية؟</span><span class="plus" aria-hidden="true"></span></summary><p>لا. يرسل Windows أمر الطباعة إلى طابعة واحدة، وميزة Printer Pooling توزّع المهام فقط ولا تطبع على جميع الطابعات.</p></details><details><summary><span>هل يعمل مع طابعات الشبكة وطابعات USB؟</span><span class="plus" aria-hidden="true"></span></summary><p>نعم، يمكن استخدام أي طابعة مثبتة في Windows، بما فيها طابعات الشبكة وUSB وطابعات الإيصالات.</p></details><details><summary><span>هل يمكن تحديد مقاس الورق؟</span><span class="plus" aria-hidden="true"></span></summary><p>لكل طابعة متعددة إعداد لمقاس الورق (A4 أو A3 أو A5 أو Letter أو Legal أو تلقائي)، وتُستخدم الإعدادات الافتراضية لكل طابعة فيما عدا ذلك.</p></details><details><summary><span>هل البرنامج مجاني؟</span><span class="plus" aria-hidden="true"></span></summary><p>نعم، DualPrint مجاني ومفتوح المصدر بموجب ترخيص MIT.</p></details></div>
     <div class="gcta">
-      <a class="btn" href="__REPO_URL__/releases/latest/download/MultiPrint.zip">تنزيل لنظام Windows</a>
-      <a class="link" href="../../ar/">العودة إلى MultiPrint <span class="chev" aria-hidden="true">‹</span></a>
+      <a class="btn" href="__REPO_URL__/releases/latest/download/DualPrint.zip">تنزيل لنظام Windows</a>
+      <a class="link" href="../../ar/">العودة إلى DualPrint <span class="chev" aria-hidden="true">‹</span></a>
     </div>
   </div>
 </article>
@@ -69,7 +69,7 @@
 <footer class="foot">
   <div class="wrap">
     <p class="langs"><a href="../../guide/" hreflang="en" lang="en">English</a><a href="../../ar/guide/" hreflang="ar" lang="ar" aria-current="page">العربية</a><a href="../../ru/guide/" hreflang="ru" lang="ru">Русский</a><a href="../../de/guide/" hreflang="de" lang="de">Deutsch</a><a href="../../es/guide/" hreflang="es" lang="es">Español</a><a href="../../fr/guide/" hreflang="fr" lang="fr">Français</a></p>
-    <p><bdi dir="rtl">MultiPrint برنامج مجاني ومفتوح المصدر.</bdi> · <bdi><a href="__REPO_URL__">GitHub</a></bdi></p>
+    <p><bdi dir="rtl"><bdi>DualPrint</bdi> (سابقًا <bdi>MultiPrint</bdi>) برنامج مجاني ومفتوح المصدر.</bdi> · <bdi><a href="__REPO_URL__">GitHub</a></bdi></p>
   </div>
 </footer>
 <script>
