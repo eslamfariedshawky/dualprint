@@ -36,7 +36,7 @@ There is no HTTP API and no database. The "contract" in this feature is the set 
 | Embedded resource name | `MultiPrint.ps1` | — | **`DualPrint.ps1`** |
 | Build outputs | `build\MultiPrint.{ps1,exe,zip}` | — | **`build\DualPrint.ps1`, `build\DualPrint.exe`, `build\DualPrint.zip`** |
 | CI artifact name | `MultiPrint` | — | **`DualPrint`** |
-| Release assets | `MultiPrint.zip`, `SHA256SUMS.txt` | — | **`DualPrint.zip`, `SHA256SUMS.txt`** |
+| Release assets | `MultiPrint.zip`, `SHA256SUMS.txt` | — | **`DualPrint.zip`, `MultiPrint.zip` (identical compatibility alias), `SHA256SUMS.txt`** |
 | Installed exe (`$RootExe`) | `C:\DualPrint\MultiPrint.exe` | `powershell.exe … C:\DualPrint\DualPrint.ps1` | **`C:\DualPrint\DualPrint.exe`** |
 | Scheduled task (`$TaskName`) | `MultiPrint Watcher` | `DualPrint Watcher` | **`DualPrint Service`** |
 | Service mutex (primary) | `Local\MultiPrintWatcher` | `Local\DualPrintWatcher` | **`Local\DualPrintService`** |
@@ -331,19 +331,25 @@ function Update-WatcherIfNeeded {
 - One constant, `$AppName = 'DualPrint'`, drives `src\$AppName.ps1`, `build\$AppName.ps1`, `/resource:…,$AppName.ps1`, `/out:build\$AppName.exe` and `build\$AppName.zip`.
 - Header comment and `Write-Host` text say DualPrint.
 - **Guard (AC-1.1, AC-6.5):** after `Compress-Archive`, open the zip (`[IO.Compression.ZipFile]::OpenRead`) and `throw` if any entry name matches `MultiPrint`, or if the zip does not contain exactly `DualPrint.exe`.
+- Local builds produce only canonical `DualPrint` outputs. CI creates the release-only `MultiPrint.zip` alias after this build; both archives contain exactly `DualPrint.exe`.
 - It does not delete old `build\MultiPrint.*` files; `build/` is git-ignored. CI starts from a clean checkout.
 
 ### 5.2 `.github/workflows/release.yml`
-- Checksum line: `<hash>  DualPrint.zip`.
-- `upload-artifact` / `download-artifact` name: `DualPrint`. Path: `build/DualPrint.zip`, `build/SHA256SUMS.txt`.
+- After the canonical build, copy `build/DualPrint.zip` to `build/MultiPrint.zip` with identical bytes for 3.0.0 and every future release (Owner-approved T013 compatibility decision).
+- Checksum lines: `<hash>  DualPrint.zip` and `<hash>  MultiPrint.zip`, with the same SHA-256 hash for both archives.
+- `upload-artifact` / `download-artifact` name: `DualPrint`. Paths: `build/DualPrint.zip`, `build/MultiPrint.zip`, `build/SHA256SUMS.txt`.
 - `action-gh-release`:
-  - `files: DualPrint.zip, SHA256SUMS.txt` (AC-6.3, exactly these two).
+  - `files: DualPrint.zip, MultiPrint.zip, SHA256SUMS.txt` (T013-amended AC-6.3, exactly these three).
   - `name:` "DualPrint 3.0.0", i.e. `DualPrint ` + the tag without its leading `v`. Compute it in a small step output, because GitHub expressions cannot strip a prefix.
   - Release notes (AC-6.4): the release job checks out only `docs/release-notes/` (sparse) and passes `body_path: docs/release-notes/${{ github.ref_name }}.md` when that file exists, keeping `generate_release_notes: true`. The tech-writer writes `docs/release-notes/v3.0.0.md`, containing the one-line rename notice, "printers and history are kept" and "re-pin `DualPrint.exe`".
 - Comments: MultiPrint → DualPrint.
 - Keep the third-party actions pinned to the same SHAs (no new actions).
 
 ### 5.3 Download link compatibility (decision, ADR 0003)
+- **Current decision (T013; Owner approved):** publish `MultiPrint.zip` as an identical-byte alias of canonical `DualPrint.zip` on 3.0.0 and every future release, with checksum lines for both names. This supersedes the original canonical-only decision and its pending confirmation below. The amended AC-6.3 permits exactly the two zips and `SHA256SUMS.txt`.
+- `releases/latest/download/MultiPrint.zip` remains usable while this contract is maintained. Version-pinned legacy links remain unchanged.
+
+**Historical reasoning (T010; superseded):**
 - The site link becomes `<repo>/releases/latest/download/DualPrint.zip` (AC-6.1). `__REPO_URL__` follows the renamed repo automatically.
 - **The release does not attach a `MultiPrint.zip` alias.** Reasons:
   1. AC-6.3 of the approved spec fixes the assets to exactly `DualPrint.zip` and `SHA256SUMS.txt`, and Goal 1 is one name.
@@ -417,7 +423,7 @@ git grep -n -i -P "multiprint(?!er)"
 | Rollback | Make `Register-ScheduledTask` fail (e.g. a pre-created read-only task with the same name, or test by code injection on a dev build): service shows stopped, `MultiPrint.exe` **not** retired, and a relaunch recovers. Manual rollback steps from TROUBLESHOOTING work. | §3.5 |
 | UI text ×5 langs | Window title, sidebar, picker title, footer "DualPrint 3.0.0", error box title. No "MultiPrint" on any page or dialog. Arabic footer renders LTR. | 4.1–4.5 |
 | Site | Rebuild equals the committed `website/`. Download link, version, brand and JSON-LD on all 12 pages. At most one MultiPrint match per page. Screenshots retaken. | 5.1–5.6, 6.1 |
-| Release (post-publish, CEO with Owner approval) | Assets exactly `DualPrint.zip` + `SHA256SUMS.txt`, hash matches, title "DualPrint 3.0.0", notes line. Old repo URL redirects. | 6.2–6.4, 8.1–8.2 |
+| Release (post-publish, CEO with Owner approval) | Assets exactly `DualPrint.zip` + `MultiPrint.zip` + `SHA256SUMS.txt`; zip bytes identical and both checksum lines match; old latest-download alias works; title "DualPrint 3.0.0", notes line. Old repo URL redirects. | 6.2–6.4, 8.1–8.2 |
 | Repo grep | Attach the `git grep` output; every match must be on the allowlist (see the spec issue in the report about the allowlist). | 7.6 |
 
 ---

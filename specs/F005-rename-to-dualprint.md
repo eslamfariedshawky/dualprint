@@ -6,7 +6,7 @@
 | Project | `multiprint` (repo `github.com/eslamfariedshawky/dualprinter`) |
 | Task | T008 (spec) |
 | Author | product-manager |
-| Status | Approved by the Owner (Nov 3, 2026 12:55 AM, with all recommendations) · Revision 1 |
+| Status | Approved by the Owner (Nov 3, 2026 12:55 AM, with all recommendations); approved compatibility-alias decision recorded Nov 3, 2026 1:31 AM (Riyadh) · Revision 2 |
 | Proposed version | 3.0.0 (Owner question 2) |
 
 > Owner's request (verbatim): "the repo is dual print the program is multiprint we need to make it only one ... dualprint and also changed it in the program too"
@@ -28,7 +28,7 @@ A search-and-replace from "MultiPrint" to "DualPrint" would turn the new service
 
 ## 2. Goals
 
-1. **One name.** "DualPrint" is the only product name users see: the exe and its file properties, the UAC prompt, window titles, the UI in all 5 app languages, the website in all 6 site languages, the download file, the docs, the release and the GitHub repo.
+1. **One name.** "DualPrint" is the product name users see: the exe and its file properties, the UAC prompt, window titles, the UI in all 5 app languages, the website in all 6 site languages, the canonical download file, the docs, the release and the GitHub repo. The Owner-approved `MultiPrint.zip` release-asset alias is the compatibility exception in AC-6.3.
 2. **Safe upgrade from MultiPrint v2.2.5.** Printers, settings, language, history and PDF output folders are kept. The MultiPrint service is stopped and removed, and it never runs at the same time as the DualPrint service.
 3. **No regression for old DualPrint 1.x installs.** The existing clean-up of the 1.x service keeps working, and it must not hit the new DualPrint service.
 4. **One download link** that matches the name. The site links to `DualPrint.zip`.
@@ -151,8 +151,8 @@ This behavior exists today (CHANGELOG 2.0.6), so it must not regress. It costs l
 
 - **AC-6.1** Given every page in every site language, when I inspect the download button, then it points to `<repo>/releases/latest/download/DualPrint.zip`.
 - **AC-6.2** Given the new release is published, when I open that link, then `DualPrint.zip` downloads, and it contains `DualPrint.exe` of the new version.
-- **AC-6.3** Given the release, when I open its assets, then they are `DualPrint.zip` and `SHA256SUMS.txt`. The checksum line names `DualPrint.zip`, and the hash matches the downloaded file.
-  - *Note (ADR 0003):* with no `MultiPrint.zip` asset, `<repo>/releases/latest/download/MultiPrint.zip` returns 404 once 3.0.0 is the latest release. Version-pinned links such as `.../releases/download/v2.2.5/MultiPrint.zip` keep working. This is **pending one Owner confirmation**. If the Owner asks to keep the old latest-link working, AC-6.3 changes to: the assets are `DualPrint.zip`, `MultiPrint.zip` (same bytes) and `SHA256SUMS.txt`, and the checksum file has one matching line for each zip.
+- **AC-6.3** Given the release, when I open its assets, then they are `DualPrint.zip`, `MultiPrint.zip` and `SHA256SUMS.txt`. `MultiPrint.zip` is byte-identical to `DualPrint.zip`; both contain the same `DualPrint.exe`. The checksum file contains one matching SHA-256 line for each zip, with the same hash and each asset's own filename. Both `<repo>/releases/latest/download/DualPrint.zip` and `<repo>/releases/latest/download/MultiPrint.zip` download the same bytes.
+  - *Owner decision (N010, resolved):* keep the `MultiPrint.zip` compatibility alias on 3.0.0 and subsequent releases so the old latest-download link keeps working. This supersedes ADR 0003's original canonical-only decision. Version-pinned links such as `.../releases/download/v2.2.5/MultiPrint.zip` remain unchanged. The website continues to advertise only `DualPrint.zip` (AC-6.1). The release workflow creates the alias by copying the canonical zip after `build.ps1` succeeds; `build.ps1` itself remains canonical-only (AC-6.5), and neither archive contains legacy-named entries.
 - **AC-6.4** Given the release, when I read its title and notes, then the title is "DualPrint <version>" and the notes say in one line that MultiPrint is now DualPrint, that existing printers and history are kept, and that a pinned `MultiPrint.exe` should be re-pinned.
 - **AC-6.5** Given `build.ps1 -Version <v>` runs, when it finishes, then it produces `build\DualPrint.exe` and `build\DualPrint.zip`, and nothing named MultiPrint.
 
@@ -172,6 +172,7 @@ This behavior exists today (CHANGELOG 2.0.6), so it must not regress. It costs l
   (e) legacy and upgrade mentions in user docs: `docs/TROUBLESHOOTING.md` (the "MultiPrint 2.x" wording required by AC-7.3, and the manual rollback steps to 2.2.5), `docs/release-notes/v3.0.0.md` (rename notice, re-pin `MultiPrint.exe` note), and the upgrade note in `docs/USER_GUIDE.md`;
   (f) `docs/seo/*` (the SEO migration plan and keyword notes, which must name the old brand);
   (g) the single per-page mention allowed by AC-5.2 (`alternateName` or "formerly MultiPrint", not both), in `website/` and its generator source.
+  (h) the Owner-approved `MultiPrint.zip` compatibility alias in the release workflow, its checksum generation, verification, and documentation (AC-6.3).
   QA attaches the command output.
 
 ### US-8. Repo and site URL
@@ -196,7 +197,9 @@ The work is one shippable pass. The order matters only because of the URL:
 
 QA should test US-2 and US-3 on a real Windows machine (or VM) with the actual v2.2.5 release installed first. A unit test of the name constants is not enough.
 
-## 9. Open questions for the Owner (3)
+## 9. Owner decisions (resolved)
+
+The Owner approved options 1A, 2A and 3A on Nov 3, 2026 12:55 AM. The original questions and recommendations below are retained as decision history. N010 is also resolved: keep the byte-identical `MultiPrint.zip` compatibility alias (AC-6.3). No product questions remain open.
 
 1. **The generic term "multi printer".** The UI calls each virtual printer a "multi printer" ("Multi printers" page title, "No multi printers yet", default name "Multi Printer"), with matching translations in 4 more app languages and 6 site languages. Should we keep that term or rebrand it?
    - **A. Keep "multi printer"** as the plain description of what you create inside DualPrint (e.g. "DualPrint — create a multi printer"). There are no translation changes, it is the lowest risk, and it keeps the "multi printer" search keyword.
@@ -223,5 +226,7 @@ QA should test US-2 and US-3 on a real Windows machine (or VM) with the actual v
 ---
 
 ## Changelog
+
+- **Revision 2** (Nov 3, 2026 1:31 AM, Riyadh; Owner-approved N010 decision): retain the byte-identical `MultiPrint.zip` release alias with a checksum line for each zip on every release. AC-6.3 supersedes the original ADR 0003 choice, while the website and `build.ps1` remain canonical-only. The release workflow creates the alias. Goal 1 and AC-7.6 record this compatibility exception; original Owner questions are marked resolved. Revision 1 below records the earlier, now-superseded pending decision.
 
 - **Revision 1** (Nov 3, 2026; clarifications from the architect review, no scope change): AC-7.6 allowlist now also covers legacy and upgrade mentions in `docs/TROUBLESHOOTING.md`, `docs/release-notes/v3.0.0.md`, the `docs/USER_GUIDE.md` upgrade note, `docs/seo/*`, and the AC-5.2 per-page mention. AC-5.2 now says at most one "MultiPrint" per page: SEO picks a JSON-LD `alternateName` or a visible "formerly MultiPrint" line, not both. AC-6.3 now notes that `releases/latest/download/MultiPrint.zip` returns 404 after 3.0.0 (ADR 0003, pending one Owner confirmation).
