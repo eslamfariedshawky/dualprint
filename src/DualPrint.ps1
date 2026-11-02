@@ -1,4 +1,4 @@
-# MultiPrint - a virtual printer that prints to several printers at the same time
+# DualPrint - a virtual printer that prints to several printers at the same time
 param([switch]$Watch)
 
 trap {
@@ -8,7 +8,7 @@ trap {
         Add-Content -Path 'C:\DualPrint\error.txt' -Value ("{0:yyyy-MM-dd HH:mm:ss}`n{1}`n" -f (Get-Date), $msg) -Encoding UTF8
     } catch {}
     if (-not $Watch) {
-        try { Add-Type -AssemblyName System.Windows.Forms; [void][System.Windows.Forms.MessageBox]::Show($msg, 'MultiPrint') } catch {}
+        try { Add-Type -AssemblyName System.Windows.Forms; [void][System.Windows.Forms.MessageBox]::Show($msg, 'DualPrint') } catch {}
     }
     $global:MPErrorShown = $true
     break
@@ -16,7 +16,7 @@ trap {
 
 $ErrorActionPreference = 'Stop'
 $Root         = 'C:\DualPrint'
-$RootExe      = Join-Path $Root 'MultiPrint.exe'
+$RootExe      = Join-Path $Root 'DualPrint.exe'
 if (-not $AppExe) { $AppExe = $RootExe }
 $AppDir = Split-Path $AppExe -Parent
 $ConfigPath   = Join-Path $Root 'printers.json'
@@ -24,13 +24,21 @@ $SettingsPath = Join-Path $Root 'settings.json'
 $Sumatra      = Join-Path $Root 'SumatraPDF.exe'
 $LogPath      = Join-Path $Root 'log.txt'
 $HistoryPath  = Join-Path $Root 'history.jsonl'
-$DefaultPdf   = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'MultiPrint PDFs'
-$TaskName     = 'MultiPrint Watcher'
-$OldTaskName  = 'DualPrint Watcher'
+$DefaultPdf   = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'DualPrint PDFs'
+$TaskName     = 'DualPrint Service'
+$ServiceMutexName = 'Local\DualPrintService'
 $Driver       = 'Microsoft Print To PDF'
 $PdfTarget    = 'Microsoft Print to PDF'
 $SumatraUrls  = @('https://www.sumatrapdfreader.org/dl/rel/3.6.1/SumatraPDF-3.6.1-64.zip',
                   'https://www.sumatrapdfreader.org/dl/rel/3.6/SumatraPDF-3.6-64.zip')
+
+# Legacy (v2.x MultiPrint and 1.x DualPrint) — kept for upgrade compatibility, see ADR 0002.
+# The new names above must never equal any of these (spec rule R1, ADR 0001).
+$LegacyDefaultPdf = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'MultiPrint PDFs'
+$LegacyTaskNames  = @('MultiPrint Watcher', 'DualPrint Watcher')
+$LegacyMutexNames = @('Local\MultiPrintWatcher', 'Local\DualPrintWatcher')
+$LegacyExe        = Join-Path $Root 'MultiPrint.exe'
+$OldTaskName      = 'DualPrint Watcher'   # Legacy 1.x task; still read by Stop-Watchers and Update-WatcherIfNeeded
 
 # ================================================================ General helpers
 function Write-Log([string]$m) {
@@ -131,7 +139,7 @@ function Get-JobDocName([string]$printer) {
 
 function Start-Watcher {
     New-Item -ItemType Directory -Force -Path $Root | Out-Null
-    $mutex = New-Object Threading.Mutex($false, 'Local\MultiPrintWatcher')
+    $mutex = New-Object Threading.Mutex($false, $ServiceMutexName)
     $got = $false
     try { $got = $mutex.WaitOne(0) }
     catch [Threading.AbandonedMutexException] { $got = $true }   # Previous instance was killed - the lock is now ours
@@ -209,7 +217,7 @@ New-Item -ItemType Directory -Force -Path $Root, (Join-Path $Root 'queues') | Ou
 # Permissions for C:\DualPrint:
 #   The folder itself: SYSTEM and Administrators full control, current user modify, other users read-only
 #   Files and subfolders inside it: inherit these same permissions (reset) — without applying folder permissions to a file
-$AclLog = Join-Path $env:TEMP 'MultiPrint-acl.txt'
+$AclLog = Join-Path $env:TEMP 'DualPrint-acl.txt'
 function Invoke-Logged([string]$exe, [string[]]$argList) {
     $out = & $exe @argList 2>&1
     try { Add-Content -Path $AclLog -Value ("> {0} {1}  (exit {2})`r`n{3}" -f $exe, ($argList -join ' '), $LASTEXITCODE, ($out -join "`r`n")) } catch {}
@@ -254,7 +262,7 @@ function Get-LockedFiles {
 $locked = @(Get-LockedFiles)
 if ($locked.Count) {
     foreach ($b in $locked | Select-Object -First 3) {
-        try { Add-Content -Path (Join-Path $env:TEMP 'MultiPrint-acl.txt') -Value ("{0:u} {1}`n{2}" -f (Get-Date), $b, ((& icacls.exe $b 2>&1) -join "`n")) } catch {}
+        try { Add-Content -Path $AclLog -Value ("{0:u} {1}`n{2}" -f (Get-Date), $b, ((& icacls.exe $b 2>&1) -join "`n")) } catch {}
     }
     Protect-RootFolder
     $null = & attrib.exe -R -H -S "$Root\*" /S /D 2>&1   # A hidden or read-only file rejects writes
@@ -295,7 +303,7 @@ function Show-LanguagePicker {
     [xml]$px = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MultiPrint" Width="380" SizeToContent="Height" WindowStartupLocation="CenterScreen"
+        Title="DualPrint" Width="380" SizeToContent="Height" WindowStartupLocation="CenterScreen"
         Background="#F1F5F9" FontFamily="Segoe UI" FontSize="15" ResizeMode="NoResize">
   <Window.Resources>
     <Style TargetType="Button">
@@ -410,7 +418,7 @@ function Find-Sumatra {
     }
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     foreach ($url in $SumatraUrls) {
-        $tmp = Join-Path ([IO.Path]::GetTempPath()) ("mp_" + [Guid]::NewGuid().ToString('N'))
+        $tmp = Join-Path ([IO.Path]::GetTempPath()) ("dp_" + [Guid]::NewGuid().ToString('N'))
         try {
             New-Item -ItemType Directory -Path $tmp | Out-Null
             $zip = Join-Path $tmp 'sumatra.zip'
@@ -448,6 +456,7 @@ function Stop-Watchers {
         try { Stop-ScheduledTask -TaskName $t -ErrorAction SilentlyContinue } catch {}
     }
     try { Unregister-ScheduledTask -TaskName $OldTaskName -Confirm:$false -ErrorAction SilentlyContinue } catch {}
+    # Legacy (v2.x MultiPrint) — kept for upgrade compatibility: stops an old MultiPrint.exe --watch
     Get-CimInstance Win32_Process -Filter "Name='MultiPrint.exe' OR Name='powershell.exe'" -ErrorAction SilentlyContinue |
         Where-Object { $_.ProcessId -ne $PID -and (
             ($_.Name -eq 'MultiPrint.exe' -and $_.CommandLine -match '\s--watch\b') -or
@@ -548,7 +557,7 @@ function Get-PrinterStates { return (Get-PrinterSnapshot).States }
 function Test-ServiceRunning {
     $m = $null
     try {
-        if ([Threading.Mutex]::TryOpenExisting('Local\MultiPrintWatcher', [ref]$m)) { $m.Dispose(); return $true }
+        if ([Threading.Mutex]::TryOpenExisting($ServiceMutexName, [ref]$m)) { $m.Dispose(); return $true }
     } catch [UnauthorizedAccessException] { return $true } catch {}
     return $false
 }
@@ -608,7 +617,7 @@ function New-El([string]$x) {
 $xamlText = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MultiPrint" Width="1080" Height="720" MinWidth="940" MinHeight="600"
+        Title="DualPrint" Width="1080" Height="720" MinWidth="940" MinHeight="600"
         WindowStartupLocation="CenterScreen" FlowDirection="{{dir}}" Background="#F6F7FB"
         FontFamily="Segoe UI" FontSize="13" Foreground="#0F172A">
   <Window.Resources>
@@ -793,7 +802,7 @@ $xamlText = @'
         <StackPanel DockPanel.Dock="Top">
           <StackPanel HorizontalAlignment="Center" Margin="0,0,0,30">
             <TextBlock Text="&#xE749;" FontFamily="{{icons}}" FontSize="36" Foreground="#5B45E6" HorizontalAlignment="Center"/>
-            <TextBlock Text="MultiPrint" FontSize="22" FontWeight="Bold" Margin="0,6,0,0" HorizontalAlignment="Center"/>
+            <TextBlock Text="DualPrint" FontSize="22" FontWeight="Bold" Margin="0,6,0,0" HorizontalAlignment="Center"/>
           </StackPanel>
           <RadioButton x:Name="NavPrinters" Style="{StaticResource Nav}" IsChecked="True"
                        Tag="&#xE749;" Content="{{nav_printers}}"/>
@@ -927,7 +936,7 @@ $xamlText = @'
             </Grid>
           </StackPanel>
         </Border>
-        <TextBlock Text="MultiPrint 2.0" Foreground="#94A3B8" Margin="4,14,0,0"/>
+        <TextBlock Text="DualPrint" Foreground="#94A3B8" Margin="4,14,0,0"/>
       </StackPanel>
     </ScrollViewer>
 
