@@ -140,6 +140,7 @@ def page(lang):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google-site-verification" content="kWrWM9pZ7TwlqT1FOuEBg3BxNEHowVKEepRebHDUjxc">
 <title>{e(c['title'])}</title>
 <meta name="description" content="{e(c['desc'])}">
 <meta name="keywords" content="{e(c['keywords'])}">
@@ -283,6 +284,7 @@ def guide_page(lang):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google-site-verification" content="kWrWM9pZ7TwlqT1FOuEBg3BxNEHowVKEepRebHDUjxc">
 <title>{e(g['title'])}</title>
 <meta name="description" content="{e(g['desc'])}">
 <meta name="robots" content="index, follow">
