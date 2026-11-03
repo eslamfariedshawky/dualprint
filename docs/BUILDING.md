@@ -27,6 +27,17 @@ The tests import function ASTs and mock machine operations; they do not launch t
 
 Before release, complete the real Windows upgrade, task/logon, UI, exactly-once printing, uninstall and rollback checks described in [the validation record](qa/T012-upgrade-validation.md). Automated checks do not replace these checks.
 
+## Website screenshots
+
+The five `website/assets/screenshot-<lang>.png` images are rendered from the real app UI (`build/DualPrint.ps1`) with sample printers and history:
+
+```powershell
+.\build.ps1 -Version 3.0.0
+powershell -NoProfile -ExecutionPolicy Bypass -STA -File tools\render_screenshots.ps1
+```
+
+The script runs the app against a temporary sandbox folder and stubs out everything that touches the system: it needs no admin rights, creates no printers or scheduled task, and does not touch `C:\DualPrint` or an installed copy. Images are 1620×1245 (the window at 150%); if the size changes, update the `width`/`height` values in `tools/build_site.py` and run `python tools/build_site.py`.
+
 ## CI behavior
 
 [Build & Release](../.github/workflows/release.yml) builds on pull requests, manual dispatch, qualifying pushes to `main`, and pushed `v*` tags. Main pushes changing only `website/**`, `docs/**` or root `*.md` files are ignored. Non-tag builds use version `0.0.0`; use a numeric release tag such as `v3.0.0` for release versioning.

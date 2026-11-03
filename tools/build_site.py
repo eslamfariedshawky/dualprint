@@ -153,7 +153,7 @@ def page(lang):
 <meta property="og:url" content="{url_of(lang)}">
 <meta property="og:image" content="{SITE}/assets/screenshot-{shot}.png">
 <meta property="og:image:width" content="1620">
-<meta property="og:image:height" content="1155">
+<meta property="og:image:height" content="1245">
 <meta property="og:locale" content="{c['locale']}">
 {og_alt}
 <meta name="twitter:card" content="summary_large_image">
@@ -191,7 +191,7 @@ def page(lang):
     </div>
     <p class="note">{e(c['dl_note']).replace('Windows 10 / 11', '<bdi dir="ltr">Windows 10 / 11</bdi>')} · <bdi dir="ltr">v{VERSION}</bdi></p>
   </div>
-  <figure class="shot reveal"><img src="{rel}assets/screenshot-{shot}.png" width="1620" height="1155" alt="{e(c['alt'])}" loading="eager" fetchpriority="high"></figure>
+  <figure class="shot reveal"><img src="{rel}assets/screenshot-{shot}.png" width="1620" height="1245" alt="{e(c['alt'])}" loading="eager" fetchpriority="high"></figure>
 </section>
 
 <section class="specs-band">
@@ -322,7 +322,7 @@ def guide_page(lang):
     {why}
     <h2>{e(g['steps_t'])}</h2>
     <ol class="gsteps">{steps}</ol>
-    <figure class="gshot"><img src="{rel}assets/screenshot-{shot}.png" width="1620" height="1155" alt="{e(c['alt'])}" loading="lazy"></figure>
+    <figure class="gshot"><img src="{rel}assets/screenshot-{shot}.png" width="1620" height="1245" alt="{e(c['alt'])}" loading="lazy"></figure>
     <h2>{e(g['tip_t'])}</h2>
     <p>{vis(g['tip'], rtl)}</p>
     <h2>{e(c['faq_title'])}</h2>
