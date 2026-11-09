@@ -43,7 +43,7 @@ jobs:
             -exec sed -i -e "s#__SITE_URL__#${SITE}#g" -e "s#__REPO_URL__#${REPO}#g" {} +
           grep -rl "__SITE_URL__\|__REPO_URL__" website && exit 1 || echo "Links OK: $SITE"
 
-      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: website
 
